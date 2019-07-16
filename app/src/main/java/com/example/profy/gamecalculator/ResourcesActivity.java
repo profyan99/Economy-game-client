@@ -12,13 +12,16 @@ import android.widget.Toast;
 
 import com.example.profy.gamecalculator.network.KryoConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ResourcesActivity extends BaseActivity {
 
     private int resourceAmount;
-    private KryoConfig.Resource resourceType;
+    private KryoConfig.ResourceData currentResource;
     private EditText resourceAmountEditText;
     private TextView resourceCostTextView;
-    private int[] resourcesCosts;
+    private List<KryoConfig.ResourceData> resourcesData;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,22 +30,29 @@ public class ResourcesActivity extends BaseActivity {
         resourceAmountEditText = findViewById(R.id.resourceEdit);
         Spinner resourceTypeSpinner = findViewById(R.id.resourceSpinner);
         resourceCostTextView = findViewById(R.id.resourceText);
+        resourcesData = new ArrayList<>();
 
-        ArrayAdapter<KryoConfig.Resource> adapter =
-                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, KryoConfig.Resource.values());
+        retrieveResources();
+
+        ArrayAdapter<KryoConfig.ResourceData> adapter =
+                new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, resourcesData);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         resourceTypeSpinner.setAdapter(adapter);
         resourceTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
-                resourceType = KryoConfig.Resource.values()[selectedItemPosition];
-                resourceCostTextView.setText("Стоимость за одну штуку: " + resourcesCosts[resourceType.ordinal()]);
+                currentResource = resourcesData.get(selectedItemPosition);
+                resourceCostTextView.setText("Стоимость за одну штуку: " + currentResource.cost);
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
+    }
+
+    private void retrieveResources() {
+        kryoClient.sendData(new KryoConfig.RequestResourceListDto());
     }
 
     @Override
@@ -59,7 +69,7 @@ public class ResourcesActivity extends BaseActivity {
     }
 
     public void buyResource(View view) {
-        if (resourceAmountEditText.getText().toString().isEmpty() || resourceType == null) {
+        if (resourceAmountEditText.getText().toString().isEmpty() || currentResource == null) {
             return;
         }
         resourceAmount = Integer.parseInt(resourceAmountEditText.getText().toString());
@@ -73,7 +83,7 @@ public class ResourcesActivity extends BaseActivity {
         KryoConfig.ResourceBuyDto resourceBuyDto = new KryoConfig.ResourceBuyDto();
         resourceBuyDto.amount = resourceAmount;
         resourceBuyDto.id = identifier;
-        resourceBuyDto.resource = resourceType;
+        resourceBuyDto.resource = currentResource;
         kryoClient.sendData(resourceBuyDto);
     }
 
@@ -88,10 +98,15 @@ public class ResourcesActivity extends BaseActivity {
     }
 
     @Override
-    public void updateResourcesCosts(KryoConfig.ResourcesCostsDto costsDto) {
-        resourcesCosts = costsDto.costs;
-        if(resourceType != null) {
-            resourceCostTextView.setText("Стоимость за одну штуку: " + resourcesCosts[resourceType.ordinal()]);
+    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
+        resourcesData = resourceListDto.resources;
+        if (currentResource != null) {
+            currentResource = resourcesData.stream()
+                    .filter(res -> currentResource.name.equals(res.name))
+                    .findFirst()
+                    .orElse(currentResource);
+
+            resourceCostTextView.setText("Стоимость за одну штуку: " + currentResource.cost);
         }
     }
 }

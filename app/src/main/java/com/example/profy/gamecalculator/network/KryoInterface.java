@@ -19,5 +19,5 @@ public interface KryoInterface {
 
     void statusCargoTransfer(KryoConfig.StatusCargoTransfer newCycle);
 
-    void updateResourcesCosts(KryoConfig.ResourcesCostsDto costsDto);
+    void updateResources(KryoConfig.ResourceListDto resourceListDto);
 }

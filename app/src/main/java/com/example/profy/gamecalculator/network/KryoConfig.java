@@ -3,6 +3,8 @@ package com.example.profy.gamecalculator.network;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
+import java.util.List;
+
 /**4
  * Created by profy on 13.07.2018.
  */
@@ -19,6 +21,7 @@ public class KryoConfig {
         kryo.register(String.class);
         kryo.register(int[].class);
         kryo.register(double[].class);
+        kryo.register(List.class);
         kryo.register(PlanetNames.class);
         kryo.register(ItemType.class);
         kryo.register(Prices.class);
@@ -44,24 +47,34 @@ public class KryoConfig {
         public int[] quantities;
     }
 
+    public static class ResourceData {
+        public int cost;
+        public String name;
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
     public static class Identifier {
         public boolean byRFID;
         public String rfid;
         public int plain;
     }
 
-    public enum Resource {
-        WOOD
+    public static class RequestResourceListDto {
+
+    }
+
+    public static class ResourceListDto {
+        public List<ResourceData> resources;
     }
 
     public static class ResourceBuyDto {
         public Identifier id;
         public int amount;
-        public Resource resource;
-    }
-
-    public static class ResourcesCostsDto {
-        public int[] costs;
+        public ResourceData resource;
     }
 
 

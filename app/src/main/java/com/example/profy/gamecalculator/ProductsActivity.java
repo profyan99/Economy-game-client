@@ -21,6 +21,6 @@ public class ProductsActivity extends BaseActivity {
     }
 
     public void sellProducts(View view) {
-        
+
     }
 }

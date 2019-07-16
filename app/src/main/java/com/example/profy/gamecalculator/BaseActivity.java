@@ -180,7 +180,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     }
 
     @Override
-    public void updateResourcesCosts(KryoConfig.ResourcesCostsDto costsDto) {
+    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
 
     }
 
