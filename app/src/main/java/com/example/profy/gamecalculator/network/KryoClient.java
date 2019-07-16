@@ -18,49 +18,41 @@ public class KryoClient {
     private Client client;
 
 
-    public KryoClient(KryoInterface kryoInterface, KryoConfig.PlanetNames planetName) {
-        KryoInterface kryoInterface1 = kryoInterface;
+    public KryoClient(KryoInterface kryoInterface) {
         client = new Client();
         KryoConfig.register(client);
         client.start();
 
-        //new ConnectToServer().execute();
         client.addListener(new Listener.ThreadedListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                Log.e("EE", "CONNECT");
+                Log.e("kryo", "Connected");
                 kryoInterface.message("Successfully connected");
             }
 
             @Override
             public void disconnected(Connection connection) {
                 kryoInterface.message("Disconnected");
-                Log.e("Log","Disconnect ---------------");
+                Log.e("kryo", "Disconnected");
             }
 
             @Override
             public void received(Connection connection, Object object) {
-                Log.e("EE", "RECEIVED: "+object.toString()+" type:"+object.getClass().getCanonicalName());
-                if(object instanceof KryoConfig.Prices) {
-                    kryoInterface.newCycle((KryoConfig.Prices)object);
-                }
-                else if(object instanceof KryoConfig.CorpAccount) {
-                    kryoInterface.corpAccount((KryoConfig.CorpAccount)object);
-                }
-                else if(object instanceof KryoConfig.PlayerInfo) {
-                    kryoInterface.cargo((KryoConfig.PlayerInfo)object);
-                }
-                else if(object instanceof KryoConfig.StatusTransaction) {
-                    kryoInterface.statusTransaction((KryoConfig.StatusTransaction)object);
-                }
-                else if(object instanceof KryoConfig.StatusMoneyTransfer) {
-                    kryoInterface.statusMoneyTransfer((KryoConfig.StatusMoneyTransfer)object);
-                }
-                else if(object instanceof KryoConfig.StatusCargoTransfer) {
-                    kryoInterface.statusCargoTransfer((KryoConfig.StatusCargoTransfer)object);
-                }
-                else {
-                    Log.e("Client", "Invalid Message type");
+                Log.e("kryo", "RECEIVED: " + object.toString() + " type:" + object.getClass().getCanonicalName());
+                if (object instanceof KryoConfig.Prices) {
+                    kryoInterface.newCycle((KryoConfig.Prices) object);
+                } else if (object instanceof KryoConfig.CorpAccount) {
+                    kryoInterface.corpAccount((KryoConfig.CorpAccount) object);
+                } else if (object instanceof KryoConfig.PlayerInfo) {
+                    kryoInterface.cargo((KryoConfig.PlayerInfo) object);
+                } else if (object instanceof KryoConfig.StatusTransaction) {
+                    kryoInterface.statusTransaction((KryoConfig.StatusTransaction) object);
+                } else if (object instanceof KryoConfig.StatusMoneyTransfer) {
+                    kryoInterface.statusMoneyTransfer((KryoConfig.StatusMoneyTransfer) object);
+                } else if (object instanceof KryoConfig.StatusCargoTransfer) {
+                    kryoInterface.statusCargoTransfer((KryoConfig.StatusCargoTransfer) object);
+                } else {
+                    Log.e("kryo", "Invalid Message type");
                 }
 
             }
@@ -72,11 +64,11 @@ public class KryoClient {
         }));
         new Thread(() -> {
             try {
-                Log.e("Client", "Connecting...");
+                Log.e("kryo", "Connecting...");
                 client.connect(5000, KryoConfig.ADDRESS, KryoConfig.SERVER_PORT, SERVER_PORT_UDP);
-                Log.e("Client", "Connected");
+                Log.e("kryo", "Connected");
             } catch (IOException e) {
-                Log.e("Client", "Error: " + e.getMessage());
+                Log.e("kryo", "Error: " + e.getMessage());
             }
         }).start();
     }
@@ -86,10 +78,9 @@ public class KryoClient {
     }
 
     public void sendData(Object o) {
-        Log.e("CLIENT", "|||||| SEND DATA: "+o.toString());
+        Log.e("kryo", "send data: " + o.toString());
         client.sendTCP(o);
     }
-
 
 
 }

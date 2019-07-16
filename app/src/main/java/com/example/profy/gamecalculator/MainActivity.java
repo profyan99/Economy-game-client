@@ -5,12 +5,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcManager;
 import android.nfc.Tag;
 import android.nfc.tech.MifareClassic;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.example.profy.gamecalculator.network.KryoClient;
 import com.example.profy.gamecalculator.network.KryoConfig;
 import com.example.profy.gamecalculator.network.KryoInterface;
+import com.example.profy.gamecalculator.util.NfcManager;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -35,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import static com.example.profy.gamecalculator.network.KryoConfig.CargoTransfer;
 import static com.example.profy.gamecalculator.network.KryoConfig.CheckMoney;
@@ -63,9 +66,6 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
     PlanetNames planetName;
     List<String> planetValues = new ArrayList<>();
     List<String> itemsValues = new ArrayList<>();
-
-    boolean isSupportNfc = false;
-
 
     private enum OperationState {
         NONE, CHECK_MONEY, CHECK_CARGO, TRANSACTION, MONEY_TRANSFER, CARGO_TRANSFER
@@ -117,21 +117,21 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
     @Override
     public void onResume() {
         super.onResume();
-        if (isSupportNfc) {
+        if (adapter != null && adapter.isEnabled()) {
             adapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         }
     }
 
     @Override
     public void onNewIntent(Intent intent) {
-        Log.i("Foreground dispatch", "Discovered tag with intent: " + intent);
+        Log.e("Foreground dispatch", "Discovered tag with intent: " + intent);
         resolveIntent(intent);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (isSupportNfc) {
+        if (adapter != null && adapter.isEnabled()) {
             adapter.disableForegroundDispatch(this);
         }
     }
@@ -351,13 +351,16 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
         }
 
         if (!adapter.isEnabled()) {
-            Toast.makeText(this, "Enable NFC before using the app",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Enable NFC before using the app", Toast.LENGTH_LONG).show();
         }
 
 
-        mPendingIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        mPendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                0
+        );
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
         try {
             ndef.addDataType("*/*");
@@ -365,35 +368,29 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
             Log.e("ERROR", "Intent filter error");
             throw new RuntimeException("fail", e);
         }
-        mFilters = new IntentFilter[]{
-                ndef,
-        };
+        mFilters = new IntentFilter[]{ndef};
         mTechLists = new String[][]{new String[]{MifareClassic.class.getName()}};
 
 
-        for (ItemType s : Arrays.asList(ItemType.values())) {
-            itemsValues.add(s.getS());
-        }
-
-        getPlanetDialog();
-
-        kryoClient = new KryoClient(this, planetName);
+        kryoClient = new KryoClient(this);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             runOnUiThread(() -> currentAlertDialog.cancel());
             kryoClient.stop();
         }));
 
 
-        textFieldFirstId = (EditText) findViewById(R.id.editText);
-        textFieldSecondId = (EditText) findViewById(R.id.editText2);
-        button = (Button) findViewById(R.id.button);
-        text = (TextView) findViewById(R.id.textView2);
-        dynText = (TextView) findViewById(R.id.textView);
-        planetNameText = (TextView) findViewById(R.id.planetName);
+        textFieldFirstId = findViewById(R.id.editText);
+        textFieldSecondId = findViewById(R.id.editText2);
+        button = findViewById(R.id.button);
+        text = findViewById(R.id.textView2);
+        dynText = findViewById(R.id.textView);
+        planetNameText = findViewById(R.id.planetName);
 
         planetNameText.setText("");
         textFieldFirstId.setText("0");
         textFieldSecondId.setText("0");
+
+        resolveIntent(getIntent());
 
     }
 
@@ -422,40 +419,11 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
     }
 
     void resolveIntent(Intent intent) {
-        Log.e("------------", "RESOLVE INTENT.................... ");
-
-        NfcManager manager = (NfcManager) this.getSystemService(Context.NFC_SERVICE);
-        NfcAdapter adapter = null;
-        Log.e("------------", "RESOLVE INTENT.................... ");
-        if (manager != null) {
-            adapter = manager.getDefaultAdapter();
-        }
-        Log.e("------------", "RESOLVE INTENT.................... ");
-        Toast.makeText(this, " - NFC...........: ", Toast.LENGTH_SHORT).show();
-        if (adapter != null && adapter.isEnabled()) {
-            isSupportNfc = true;
-            String action = intent.getAction();
-            if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
-                Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                MifareClassic mfc = MifareClassic.get(tagFromIntent);
-                byte[] data;
-                try {
-                    mfc.connect();
-                    if (mfc.authenticateSectorWithKeyA(0, MifareClassic.KEY_DEFAULT)) {
-                        data = mfc.readBlock(0);
-                        Toast.makeText(this, " - NFC: " + bytesToHex(data), Toast.LENGTH_SHORT).show();
-                        if (state != OperationState.NONE) {
-                            proceed(bytesToHex(data));
-                        }
-
-                    } else {
-                        Log.e("BAD", "NO AUTHHH");
-                        Toast.makeText(this, " - BAD NFC CHECK", Toast.LENGTH_SHORT).show();
-                    }
-
-                } catch (IOException e) {
-                    Toast.makeText(this, "EXC" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-                }
+        if (Objects.equals(intent.getAction(), NfcAdapter.ACTION_TECH_DISCOVERED)) {
+            try {
+                Toast.makeText(this, NfcManager.getNfcCardData(intent), Toast.LENGTH_LONG).show();
+            } catch (IOException e) {
+                Toast.makeText(this, "Error getting nfc data", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -538,7 +506,6 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
             textFieldSecondId.setText("0");
         }
     }
-
 
     @Override
     public void message(String message) {
@@ -663,7 +630,6 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
         getNFCTransferMoneyDialog(needNfc);
     }
 
-
     public void cargoTransferClick(View view) {
         boolean needNfc = checkEditTextTwoId();
         if (needNfc) {
@@ -675,7 +641,6 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
         transferParams = new TransferParams();
         getNFCTransactionDialog(needNfc);
     }
-
 
     private void checkMoney(Identifier id) {
         CheckMoney checkMoney = new KryoConfig.CheckMoney();
@@ -696,7 +661,6 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
         CheckPlayerInfo.id = id;
         new SandServer<>().execute(CheckPlayerInfo);
     }
-
 
     private void moneyTransfer(Identifier from, Identifier to, int amount) {
         MoneyTransfer moneyTransfer = new MoneyTransfer();
