@@ -1,13 +1,27 @@
 package com.example.profy.gamecalculator;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
+import android.database.Cursor;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.profy.gamecalculator.network.KryoClient;
@@ -18,6 +32,7 @@ import com.example.profy.gamecalculator.util.NfcManager;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public abstract class BaseActivity extends AppCompatActivity implements Serializable, KryoInterface {
 
@@ -26,6 +41,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     protected String[][] mTechLists;
     protected NfcAdapter adapter;
     protected KryoClient kryoClient;
+    protected boolean isDialogShown = false;
+    protected AlertDialog currentAlertDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,7 +52,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         //init client-server connection
         kryoClient = new KryoClient(this);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            kryoClient.stop();
+            if(currentAlertDialog != null && currentAlertDialog.isShowing()) {
+                runOnUiThread(() -> currentAlertDialog.cancel());
+            }
+            if(kryoClient != null) {
+                kryoClient.stop();
+            }
         }));
 
         resolveIntent(getIntent());
@@ -43,12 +65,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
 
     /**
      * Set layout in activity
+     *
      * @return id of xml representation
      */
     protected abstract int getLayoutResourceId();
 
     /**
      * Called, when nfc was successfully read
+     *
      * @param cardId 16 bytes nfc identifier
      */
     protected abstract void resolveNfc(String cardId);
@@ -75,6 +99,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (kryoClient != null) {
+            kryoClient.stop();
+        }
+    }
+
     void resolveIntent(Intent intent) {
         if (Objects.equals(intent.getAction(), NfcAdapter.ACTION_TECH_DISCOVERED)) {
             try {
@@ -86,6 +118,31 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             }
         }
     }
+
+    protected void showTransactionDialog(String title, Consumer<Integer> cardConsumer) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater factory = getLayoutInflater();
+        final View textEntryView = factory.inflate(R.layout.alert_transaction, null);
+
+        builder
+                .setView(textEntryView)
+                .setCancelable(true)
+                .setTitle(title);
+
+        EditText editText = textEntryView.findViewById(R.id.amount_text);
+        builder.setNegativeButton("Ок", (dialogInterface, i) -> {
+            if (editText.getText().toString().isEmpty()) {
+                Toast.makeText(this, "Введите сначала id карты\n или воспользуйтесь nfc",
+                        Toast.LENGTH_SHORT).show();
+            } else {
+                cardConsumer.accept(Integer.valueOf(editText.getText().toString()));
+            }
+        });
+
+        currentAlertDialog = builder.create();
+        currentAlertDialog.show();
+    }
+
 
     @Override
     public void message(String message) {
@@ -120,5 +177,24 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     @Override
     public void statusCargoTransfer(KryoConfig.StatusCargoTransfer newCycle) {
 
+    }
+
+    @Override
+    public void updateResourcesCosts(KryoConfig.ResourcesCostsDto costsDto) {
+
+    }
+
+    protected KryoConfig.Identifier getIdentifier(String id) {
+        KryoConfig.Identifier identifier = new KryoConfig.Identifier();
+        identifier.byRFID = true;
+        identifier.rfid = id;
+        return identifier;
+    }
+
+    protected KryoConfig.Identifier getIdentifier(int id) {
+        KryoConfig.Identifier identifier = new KryoConfig.Identifier();
+        identifier.byRFID = false;
+        identifier.plain = id;
+        return identifier;
     }
 }

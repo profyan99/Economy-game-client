@@ -21,7 +21,6 @@ public class KryoConfig {
         kryo.register(double[].class);
         kryo.register(PlanetNames.class);
         kryo.register(ItemType.class);
-        kryo.register(PlanetInfo.class);
         kryo.register(Prices.class);
         kryo.register(Identifier.class);
         kryo.register(CheckMoney.class);
@@ -38,9 +37,6 @@ public class KryoConfig {
         kryo.register(Register.class);
     }
 
-    public static class PlanetInfo {
-        public PlanetNames planet;
-    }
 
     public static class Prices {
         public double[] pricesToSell;
@@ -53,6 +49,23 @@ public class KryoConfig {
         public String rfid;
         public int plain;
     }
+
+    public enum Resource {
+        WOOD
+    }
+
+    public static class ResourceBuyDto {
+        public Identifier id;
+        public int amount;
+        public Resource resource;
+    }
+
+    public static class ResourcesCostsDto {
+        public int[] costs;
+    }
+
+
+    //OLD
 
     public static class CheckMoney {
         public Identifier id;

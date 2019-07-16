@@ -7,36 +7,34 @@
 
     <TextView
         android:id="@+id/mess"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="308dp"
+        android:layout_height="67dp"
         android:layout_marginLeft="50dp"
         android:layout_marginTop="30dp"
-        android:text="Input amount and item type"
+        android:text="Введите id карточки или поднесите карту к телефону"
         android:textSize="16sp" />
 
     <EditText
         android:id="@+id/amount_text"
-        android:layout_width="200dp"
+        android:layout_width="308dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="50dp"
-        android:layout_marginRight="40dp"
         android:layout_marginTop="15dp"
+        android:layout_marginRight="40dp"
         android:ems="10"
         android:hint="Amount"
         android:text="0" />
-
-    <Spinner
-        android:id="@+id/spinnerTrans"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginTop="15dp"/>
 
     <TextView
         android:id="@+id/tvCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""/>
+
+    <Button
+        android:id="@+id/button_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ок" />
 
 </LinearLayout>

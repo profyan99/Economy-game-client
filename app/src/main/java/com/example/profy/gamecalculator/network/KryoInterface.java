@@ -18,4 +18,6 @@ public interface KryoInterface {
     void statusMoneyTransfer(KryoConfig.StatusMoneyTransfer newCycle);
 
     void statusCargoTransfer(KryoConfig.StatusCargoTransfer newCycle);
+
+    void updateResourcesCosts(KryoConfig.ResourcesCostsDto costsDto);
 }

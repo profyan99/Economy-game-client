@@ -8,6 +8,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.tech.MifareClassic;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -44,9 +45,9 @@ import static com.example.profy.gamecalculator.network.KryoConfig.MoneyTransfer;
 import static com.example.profy.gamecalculator.network.KryoConfig.PlanetNames;
 import static com.example.profy.gamecalculator.network.KryoConfig.Transaction;
 
-public class MainActivity extends AppCompatActivity implements KryoInterface, Serializable {
+public class MainActivity extends AppCompatActivity implements Serializable {
 
-    double prices[][] = new double[ItemType.values().length][2];
+   /* double prices[][] = new double[ItemType.values().length][2];
     int quantities[] = new int[ItemType.values().length];
 
     EditText textFieldFirstId, textFieldSecondId;
@@ -359,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
         );
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
         try {
-            ndef.addDataType("*/*");
+            ndef.addDataType("");
         } catch (IntentFilter.MalformedMimeTypeException e) {
             Log.e("ERROR", "Intent filter error");
             throw new RuntimeException("fail", e);
@@ -691,5 +692,15 @@ public class MainActivity extends AppCompatActivity implements KryoInterface, Se
             return null;
         }
 
+    }*/
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void setResourceActivity(View view) {
+        startActivity(new Intent(this, ResourcesActivity.class));
     }
 }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ProductsActivity">
 
     <TextView
         android:id="@+id/resourceView"
@@ -12,7 +12,7 @@
         android:layout_height="34dp"
         android:layout_marginTop="32dp"
         android:background="#3F51B5"
-        android:text='Станция "Ресурсы"'
+        android:text='Станция "Продукция"'
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
@@ -21,23 +21,23 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/resourceButton"
+        android:id="@+id/productButton"
         android:layout_width="152dp"
         android:layout_height="52dp"
         android:layout_marginTop="148dp"
         android:background="#3F51B5"
-        android:onClick="buyResource"
-        android:text="Купить"
+        android:onClick="sellProducts"
+        android:text="Продать"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resourceEdit" />
+        app:layout_constraintTop_toBottomOf="@+id/productEdit" />
 
     <EditText
-        android:id="@+id/resourceEdit"
+        android:id="@+id/productEdit"
         android:layout_width="200dp"
         android:layout_height="45dp"
         android:layout_marginTop="68dp"
@@ -47,10 +47,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resourceSpinner" />
+        app:layout_constraintTop_toBottomOf="@+id/productSpinner" />
 
     <Spinner
-        android:id="@+id/resourceSpinner"
+        android:id="@+id/productSpinner"
         android:layout_width="200dp"
         android:layout_height="45dp"
         android:layout_marginTop="36dp"
@@ -65,13 +65,13 @@
         android:layout_width="120dp"
         android:layout_height="45dp"
         android:layout_marginTop="36dp"
-        android:text="Ресурс"
+        android:text="Продукция"
         android:textAlignment="viewStart"
         android:textAllCaps="false"
         android:textColor="#3F51B5"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/resourceEdit"
+        app:layout_constraintEnd_toStartOf="@+id/productEdit"
         app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/resourceView" />
@@ -87,12 +87,12 @@
         android:textColor="#3F51B5"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/resourceEdit"
+        app:layout_constraintEnd_toStartOf="@+id/productEdit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <TextView
-        android:id="@+id/resourceText"
+        android:id="@+id/productText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="64dp"
