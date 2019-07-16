@@ -24,6 +24,11 @@
                 <action android:name="android.nfc.action.TECH_DISCOVERED"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ResourcesActivity">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
