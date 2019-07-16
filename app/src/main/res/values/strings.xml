@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Game Calculator</string>
+    <string-array name="stantionlist">
+        <item>Кордова</item>
+        <item>Лиссабон</item>
+        <item>Валенсия</item>
+        <item>Леон</item>
+        <item>Тулуза</item>
+        <item>Марсель</item>
+        <item>Орлеан</item>
+        <item>Обмен</item>
+    </string-array>
+    <string-array name="resourceslist">
+        <item>Пряности</item>
+        <item>Рыба</item>
+        <item>Ткань</item>
+        <item>Зерно</item>
+        <item>Железо</item>
+        <item>Вино</item>
+        <item>Дерево</item>
+    </string-array>
+    <string-array name="resourceslistSec">
+        <item>Ливры</item>
+    </string-array>
+</resources>
