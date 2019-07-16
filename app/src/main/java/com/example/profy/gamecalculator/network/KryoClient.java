@@ -1,6 +1,8 @@
 package com.example.profy.gamecalculator.network;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -26,19 +28,19 @@ public class KryoClient {
         client.addListener(new Listener.ThreadedListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                Log.e("kryo", "Connected");
+                Log.d("kryo", "Connected");
                 kryoInterface.message("Successfully connected");
             }
 
             @Override
             public void disconnected(Connection connection) {
                 kryoInterface.message("Disconnected");
-                Log.e("kryo", "Disconnected");
+                Log.d("kryo", "Disconnected");
             }
 
             @Override
             public void received(Connection connection, Object object) {
-                Log.e("kryo", "RECEIVED: " + object.toString() + " type:" + object.getClass().getCanonicalName());
+                Log.d("kryo", "RECEIVED: " + object.toString() + " type:" + object.getClass().getCanonicalName());
                 if (object instanceof KryoConfig.Prices) {
                     kryoInterface.newCycle((KryoConfig.Prices) object);
                 } else if (object instanceof KryoConfig.CorpAccount) {
@@ -51,8 +53,9 @@ public class KryoClient {
                     kryoInterface.statusMoneyTransfer((KryoConfig.StatusMoneyTransfer) object);
                 } else if (object instanceof KryoConfig.StatusCargoTransfer) {
                     kryoInterface.statusCargoTransfer((KryoConfig.StatusCargoTransfer) object);
+
                 } else {
-                    Log.e("kryo", "Invalid Message type");
+                    Log.d("kryo", "Invalid Message type");
                 }
 
             }
@@ -64,22 +67,28 @@ public class KryoClient {
         }));
         new Thread(() -> {
             try {
-                Log.e("kryo", "Connecting...");
+                Log.d("kryo", "Connecting...");
                 client.connect(5000, KryoConfig.ADDRESS, KryoConfig.SERVER_PORT, SERVER_PORT_UDP);
-                Log.e("kryo", "Connected");
+                Log.d("kryo", "Connected");
             } catch (IOException e) {
-                Log.e("kryo", "Error: " + e.getMessage());
+                Log.d("kryo", "Error: " + e.getMessage());
             }
         }).start();
     }
 
     public void stop() {
+        Log.d("kryo", "Stopping client...");
         client.stop();
     }
 
-    public void sendData(Object o) {
-        Log.e("kryo", "send data: " + o.toString());
-        client.sendTCP(o);
+    public void sendData(Object o, Context context) {
+        Log.d("kryo", "Send data: " + o.toString());
+        if(!client.isConnected()) {
+            Toast.makeText(context, "Ошибка подключения", Toast.LENGTH_LONG).show();
+        } else {
+            client.sendTCP(o);
+            Toast.makeText(context, "Успешно", Toast.LENGTH_SHORT).show();
+        }
     }
 
 

@@ -19,5 +19,7 @@ public interface KryoInterface {
 
     void statusCargoTransfer(KryoConfig.StatusCargoTransfer newCycle);
 
-    void updateResources(KryoConfig.ResourceListDto resourceListDto);
+    void updateProducts(KryoConfig.EntityListDto<KryoConfig.ProductData> productListDto);
+
+    void updateResources(KryoConfig.EntityListDto<KryoConfig.ResourceData> resourceListDto);
 }

@@ -7,11 +7,13 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/resourceView"
-        android:layout_width="253dp"
+        android:id="@+id/resourceTitleText"
+        android:layout_width="wrap_content"
         android:layout_height="34dp"
         android:layout_marginTop="32dp"
         android:background="#3F51B5"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:text='Станция "Ресурсы"'
         android:textAlignment="center"
         android:textColor="#FFFFFF"
@@ -26,7 +28,7 @@
         android:layout_height="52dp"
         android:layout_marginTop="148dp"
         android:background="#3F51B5"
-        android:onClick="buyResource"
+        android:onClick="resolveTransaction"
         android:text="Купить"
         android:textAlignment="center"
         android:textColor="#FFFFFF"
@@ -47,25 +49,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resourceSpinner" />
+        app:layout_constraintTop_toBottomOf="@+id/resourceSpinner"
+        android:importantForAutofill="no" />
 
     <Spinner
         android:id="@+id/resourceSpinner"
         android:layout_width="200dp"
         android:layout_height="45dp"
         android:layout_marginTop="36dp"
-        android:background="#3F51B5"
+        android:popupBackground="@android:color/background_light"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resourceView" />
+        app:layout_constraintTop_toBottomOf="@+id/resourceTitleText" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/resourceTypeText"
         android:layout_width="120dp"
         android:layout_height="45dp"
         android:layout_marginTop="36dp"
-        android:text="Ресурс"
+        android:text="Тип"
         android:textAlignment="viewStart"
         android:textAllCaps="false"
         android:textColor="#3F51B5"
@@ -74,7 +77,7 @@
         app:layout_constraintEnd_toStartOf="@+id/resourceEdit"
         app:layout_constraintHorizontal_bias="0.507"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resourceView" />
+        app:layout_constraintTop_toBottomOf="@+id/resourceTitleText" />
 
     <TextView
         android:id="@+id/textView6"
@@ -89,7 +92,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/resourceEdit"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/resourceTypeText" />
 
     <TextView
         android:id="@+id/resourceText"

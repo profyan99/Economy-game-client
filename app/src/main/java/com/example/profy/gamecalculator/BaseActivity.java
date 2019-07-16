@@ -3,11 +3,13 @@ package com.example.profy.gamecalculator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.database.Cursor;
 import android.nfc.NfcAdapter;
+import android.nfc.tech.MifareClassic;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
@@ -41,13 +43,40 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     protected String[][] mTechLists;
     protected NfcAdapter adapter;
     protected KryoClient kryoClient;
-    protected boolean isDialogShown = false;
     protected AlertDialog currentAlertDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResourceId());
+
+        //NFC
+        adapter = NfcAdapter.getDefaultAdapter(this);
+
+        if (adapter == null) {
+            Toast.makeText(this, "NFC not supported", Toast.LENGTH_LONG).show();
+        }
+
+        if (!adapter.isEnabled()) {
+            Toast.makeText(this, "Enable NFC before using the app", Toast.LENGTH_LONG).show();
+        }
+
+
+        mPendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                0
+        );
+        IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
+        try {
+            ndef.addDataType("*/*");
+        } catch (IntentFilter.MalformedMimeTypeException e) {
+            Log.e("ERROR", "Intent filter error");
+            throw new RuntimeException("fail", e);
+        }
+        mFilters = new IntentFilter[]{ndef};
+        mTechLists = new String[][]{new String[]{MifareClassic.class.getName()}};
 
         //init client-server connection
         kryoClient = new KryoClient(this);
@@ -111,7 +140,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         if (Objects.equals(intent.getAction(), NfcAdapter.ACTION_TECH_DISCOVERED)) {
             try {
                 String cardId = NfcManager.getNfcCardData(intent);
-                Toast.makeText(this, cardId, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Card id: " + cardId, Toast.LENGTH_LONG).show();
                 resolveNfc(cardId);
             } catch (IOException e) {
                 Toast.makeText(this, "Error getting nfc data", Toast.LENGTH_LONG).show();
@@ -129,14 +158,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
                 .setCancelable(true)
                 .setTitle(title);
 
-        EditText editText = textEntryView.findViewById(R.id.amount_text);
-        builder.setNegativeButton("Ок", (dialogInterface, i) -> {
+        EditText editText = textEntryView.findViewById(R.id.id_text);
+        builder.setPositiveButton("Ок", (dialogInterface, i) -> {
             if (editText.getText().toString().isEmpty()) {
                 Toast.makeText(this, "Введите сначала id карты\n или воспользуйтесь nfc",
                         Toast.LENGTH_SHORT).show();
             } else {
                 cardConsumer.accept(Integer.valueOf(editText.getText().toString()));
             }
+        });
+        builder.setNegativeButton("Отмена", (dialogInterface, i) -> {
+            dialogInterface.cancel();
         });
 
         currentAlertDialog = builder.create();
@@ -180,7 +212,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     }
 
     @Override
-    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
+    public void updateProducts(KryoConfig.EntityListDto<KryoConfig.ProductData> productListDto) {
+
+    }
+
+    @Override
+    public void updateResources(KryoConfig.EntityListDto<KryoConfig.ResourceData> resourceListDto) {
 
     }
 

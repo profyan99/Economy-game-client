@@ -703,4 +703,8 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     public void setResourceActivity(View view) {
         startActivity(new Intent(this, ResourcesActivity.class));
     }
+
+    public void setProductActivity(View view) {
+        startActivity(new Intent(this, ProductsActivity.class));
+    }
 }

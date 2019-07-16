@@ -47,13 +47,29 @@ public class KryoConfig {
         public int[] quantities;
     }
 
-    public static class ResourceData {
+    public static class Entity {
         public int cost;
         public String name;
+
+        public Entity(int cost, String name) {
+            this.cost = cost;
+            this.name = name;
+        }
 
         @Override
         public String toString() {
             return name;
+        }
+    }
+
+    public static class EntityListDto<T extends Entity> {
+        public List<T> entities;
+    }
+
+    public static class ResourceData extends Entity {
+
+        public ResourceData(int cost, String name) {
+            super(cost, name);
         }
     }
 
@@ -75,6 +91,29 @@ public class KryoConfig {
         public Identifier id;
         public int amount;
         public ResourceData resource;
+    }
+
+    public static class ProductData extends Entity{
+
+        public ProductData(int cost, String name) {
+            super(cost, name);
+        }
+    }
+
+    public static class RequestProductListDto {
+
+    }
+
+    public static class ProductListDto {
+        public List<ProductData> products;
+    }
+
+
+
+    public static class ProductSellDto {
+        public Identifier id;
+        public int amount;
+        public ProductData product;
     }
 
 
@@ -179,6 +218,7 @@ public class KryoConfig {
             return s;
         }
     }
+
 
 
 }
