@@ -1,4 +1,4 @@
-package com.example.profy.gamecalculator.activity;
+package com.example.profy.gamecalculator.activity.transaction;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,7 +16,7 @@ public class ResourcesActivity extends SimpleTransactionActivity<KryoConfig.Reso
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         receiver.addHandler(NetworkService.RESOURCE_LIST_ACTION, Obj -> {
-            updateResources((KryoConfig.ResourceListDto) Obj);
+            updateEntities(((KryoConfig.ResourceListDto) Obj).resources);
         });
         ((TextView) findViewById(R.id.resourceTitleText)).setText("Станция покупки ресурсов");
         ((Button) findViewById(R.id.resourceButton)).setText("Купить");
@@ -34,27 +34,12 @@ public class ResourcesActivity extends SimpleTransactionActivity<KryoConfig.Reso
 
     @Override
     protected void retrieveEntities() {
-        KryoConfig.RequestResourceListDto packet = new KryoConfig.RequestResourceListDto();
-        networkService.sendData(packet, this);
+        networkService.sendData(new KryoConfig.RequestResourceListDto(), this);
     }
 
-    /*public void resolve(View view) {
-        Log.i("ResourcesActivity", "sending broadcast with action " + NetworkService.PRODUCT_LIST_ACTION);
-        Intent intent = new Intent();
-        intent.setAction(NetworkService.PRODUCT_LIST_ACTION);
-//        List<KryoConfig.ResourceData> resourceDataList = new ArrayList<>();
-//        resourceDataList.add(new KryoConfig.ResourceData(100, "Svet off"));
-//        intent.putExtra(NetworkService.RETRIEVE_DATA, new KryoConfig.ResourceListDto(resourceDataList));
-        sendBroadcast(intent);
-    }*/
 
     @Override
     protected String getDialogTitle() {
         return "Покупка ресурсов";
-    }
-
-    @Override
-    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
-        updateEntities(resourceListDto.resources);
     }
 }

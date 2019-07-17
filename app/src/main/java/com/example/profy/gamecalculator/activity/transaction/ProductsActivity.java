@@ -1,4 +1,4 @@
-package com.example.profy.gamecalculator.activity;
+package com.example.profy.gamecalculator.activity.transaction;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,14 +10,12 @@ import com.example.profy.gamecalculator.R;
 import com.example.profy.gamecalculator.network.KryoConfig;
 import com.example.profy.gamecalculator.network.NetworkService;
 
-import java.util.ArrayList;
-
 public class ProductsActivity extends SimpleTransactionActivity<KryoConfig.ProductData> {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         receiver.addHandler(NetworkService.PRODUCT_LIST_ACTION, Obj -> {
-            updateProducts((KryoConfig.ProductListDto) Obj);
+            updateEntities(((KryoConfig.ProductListDto) Obj).products);
         });
 
         ((TextView) findViewById(R.id.resourceTitleText)).setText("Станция продажи товара");
@@ -42,10 +40,5 @@ public class ProductsActivity extends SimpleTransactionActivity<KryoConfig.Produ
     @Override
     protected String getDialogTitle() {
         return "Продажа товара";
-    }
-
-    @Override
-    public void updateProducts(KryoConfig.ProductListDto productListDto) {
-        updateEntities(productListDto.products);
     }
 }

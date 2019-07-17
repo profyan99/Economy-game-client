@@ -16,7 +16,7 @@ public class ResourceTransferActivity extends SimpleTransferActivity<KryoConfig.
         super.onCreate(savedInstanceState);
 
         receiver.addHandler(NetworkService.RESOURCE_LIST_ACTION, Obj -> {
-            updateResources((KryoConfig.ResourceListDto) Obj);
+            updateEntities(((KryoConfig.ResourceListDto) Obj).resources);
         });
 
         ((TextView) findViewById(R.id.transferTitleText)).setText("Трансфер ресурсов");
@@ -38,8 +38,4 @@ public class ResourceTransferActivity extends SimpleTransferActivity<KryoConfig.
         networkService.sendData(resourceTransferDto, this);
     }
 
-    @Override
-    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
-        updateEntities(resourceListDto.resources);
-    }
 }

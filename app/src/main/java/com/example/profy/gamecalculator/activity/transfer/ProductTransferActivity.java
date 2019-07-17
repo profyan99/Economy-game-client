@@ -15,7 +15,7 @@ public class ProductTransferActivity extends SimpleTransferActivity<KryoConfig.P
         super.onCreate(savedInstanceState);
 
         receiver.addHandler(NetworkService.PRODUCT_LIST_ACTION, Obj -> {
-            updateProducts((KryoConfig.ProductListDto) Obj);
+            updateEntities(((KryoConfig.ProductListDto) Obj).products);
         });
 
         ((TextView) findViewById(R.id.transferTitleText)).setText("Трансфер товаров");
@@ -35,10 +35,5 @@ public class ProductTransferActivity extends SimpleTransferActivity<KryoConfig.P
         productTransferDto.secondPlayer = secondPerson;
         productTransferDto.product = currentEntity;
         networkService.sendData(productTransferDto, this);
-    }
-
-    @Override
-    public void updateProducts(KryoConfig.ProductListDto productListDto) {
-        updateEntities(productListDto.products);
     }
 }

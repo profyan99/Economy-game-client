@@ -64,6 +64,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         filter.addAction(NetworkService.PLAYER_INFORMATION_ACTION);
         filter.addAction(NetworkService.RESOURCE_LIST_ACTION);
         filter.addAction(NetworkService.TRANSACTION_STATUS_ACTION);
+        filter.addAction(NetworkService.CYCLE_ACTION);
         registerReceiver(receiver, filter);
         //NFC
         adapter = NfcAdapter.getDefaultAdapter(this);
@@ -110,6 +111,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
      * @return id of xml representation
      */
     protected abstract int getLayoutResourceId();
+
+    protected abstract void retrieveEntities();
 
 
     @Override
@@ -232,14 +235,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         return super.onOptionsItemSelected(item);
     }
 
-    public void updateProducts(KryoConfig.ProductListDto productListDto) {
-
-    }
-
-    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
-
-    }
-
     public void transactionStatus(KryoConfig.TransactionStatus transactionStatus) {
         StringBuilder contentBuilder = new StringBuilder();
         contentBuilder
@@ -321,6 +316,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             NetworkService.NetworkBinder binder = (NetworkService.NetworkBinder) service;
             networkService = binder.getService();
             mBound = true;
+            retrieveEntities();
         }
 
         @Override
@@ -328,4 +324,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             mBound = false;
         }
     };
+
+
 }

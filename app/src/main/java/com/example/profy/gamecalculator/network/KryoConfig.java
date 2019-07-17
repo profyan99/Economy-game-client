@@ -43,9 +43,11 @@ public class KryoConfig {
         kryo.register(ResourceTransferDto.class);
         kryo.register(MoneyTransferDto.class);
         kryo.register(TransactionStatus.class);
+        kryo.register(RequestProductionListDto.class);
+        kryo.register(ProductionDto.class);
     }
 
-    public static class Entity implements Serializable{
+    public static class Entity implements Serializable {
         public int amount;
         public String name;
 
@@ -63,7 +65,7 @@ public class KryoConfig {
         }
     }
 
-    public static class ResourceData extends Entity implements Serializable{
+    public static class ResourceData extends Entity implements Serializable {
 
         public ResourceData(int cost, String name) {
             super(cost, name);
@@ -75,7 +77,7 @@ public class KryoConfig {
 
     }
 
-    public static class MoneyData extends Entity implements Serializable{
+    public static class MoneyData extends Entity implements Serializable {
 
         public MoneyData(int amount, String name) {
             super(amount, name);
@@ -88,7 +90,7 @@ public class KryoConfig {
 
     }
 
-    public static class Identifier implements Serializable{
+    public static class Identifier implements Serializable {
         public boolean byRFID;
         public String rfid = "";
         public int plain;
@@ -110,7 +112,7 @@ public class KryoConfig {
 
         @Override
         public String toString() {
-            if(byRFID) {
+            if (byRFID) {
                 return rfid;
             } else {
                 return "" + plain;
@@ -119,21 +121,21 @@ public class KryoConfig {
     }
 
 
-    public static class RequestResourceListDto implements Serializable{
+    public static class RequestResourceListDto implements Serializable {
 
     }
 
-    public static class ResourceListDto implements Serializable{
+    public static class ResourceListDto implements Serializable {
         public List<ResourceData> resources;
     }
 
-    public static class ResourceBuyDto implements Serializable{
+    public static class ResourceBuyDto implements Serializable {
         public Identifier id;
         public int amount;
         public ResourceData resource;
     }
 
-    public static class ProductData extends Entity implements Serializable{
+    public static class ProductData extends Entity implements Serializable {
 
         public ProductData(int cost, String name) {
             super(cost, name);
@@ -141,57 +143,83 @@ public class KryoConfig {
 
         public ProductData() {
         }
+    }
 
+    public static class RequestProductListDto implements Serializable {
 
     }
 
-    public static class RequestProductListDto implements Serializable{
-
-    }
-
-    public static class ProductListDto implements Serializable{
+    public static class ProductListDto implements Serializable {
         public List<ProductData> products;
     }
 
-    public static class ProductSellDto implements Serializable{
+    public static class ProductSellDto implements Serializable {
         public Identifier id;
         public int amount;
         public ProductData product;
     }
 
-    public static class RequestPlayerInformation implements Serializable{
+    public static class RequestPlayerInformation implements Serializable {
         public Identifier id;
     }
 
-    public static class PlayerInformation implements Serializable{
+    public static class PlayerInformation implements Serializable {
         public String name;
         public int money;
         public List<ProductData> products;
         public List<ResourceData> resources;
     }
 
-    public static class ProductTransferDto implements Serializable{
+    public static class ProductTransferDto implements Serializable {
         public Identifier firstPlayer;
         public Identifier secondPlayer;
         public ProductData product;
         public int amount;
     }
 
-    public static class ResourceTransferDto implements Serializable{
+    public static class ResourceTransferDto implements Serializable {
         public Identifier firstPlayer;
         public Identifier secondPlayer;
         public ResourceData resource;
         public int amount;
     }
 
-    public static class MoneyTransferDto implements Serializable{
+    public static class MoneyTransferDto implements Serializable {
         public Identifier firstPlayer;
         public Identifier secondPlayer;
         public int amount;
     }
 
-    public static class TransactionStatus implements Serializable{
+    public static class TransactionStatus implements Serializable {
         public boolean isSuccess;
         public String error;
+    }
+
+    public static class ProductionDto implements Serializable {
+        public Identifier id;
+        public ProductData product;
+        public int amount;
+    }
+
+    public static class RequestProductionListDto implements Serializable {
+
+    }
+
+    public static class VexelCashingDto implements Serializable {
+        public Identifier id;
+        public int vexelId;
+    }
+
+    public static class RequestGameCycle implements Serializable {
+
+    }
+
+    public static class GameCycleDto implements Serializable {
+        public int cycle;
+    }
+
+    public static class BankTransaction implements Serializable {
+        public Identifier id;
+        public int amount;
     }
 }

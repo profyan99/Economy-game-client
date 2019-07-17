@@ -1,4 +1,4 @@
-package com.example.profy.gamecalculator.activity;
+package com.example.profy.gamecalculator.activity.transaction;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.profy.gamecalculator.R;
+import com.example.profy.gamecalculator.activity.BaseActivity;
 import com.example.profy.gamecalculator.network.KryoConfig;
 import com.example.profy.gamecalculator.util.IdentificationAdapter;
 
@@ -24,6 +25,7 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
     protected TextView costTextView;
     protected List<T> entityData;
     protected ArrayAdapter<T> adapter;
+    private static final String INFO_TEXT_DEST = "Стоимость за одну штуку: ";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,8 +35,6 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
         costTextView = findViewById(R.id.resourceText);
         entityData = new ArrayList<>();
 
-        //retrieveEntities();
-
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, entityData);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         resourceTypeSpinner.setAdapter(adapter);
@@ -42,7 +42,7 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 currentEntity = entityData.get(selectedItemPosition);
-                costTextView.setText("Стоимость за одну штуку: " + currentEntity.amount);
+                updateText();
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -84,14 +84,16 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
                     .findFirst()
                     .orElse(currentEntity);
 
-            costTextView.setText("Стоимость за одну штуку: " + currentEntity.amount);
+            updateText();
         }
     }
 
     protected abstract void sendData(KryoConfig.Identifier identifier);
 
-    protected abstract void retrieveEntities();
-
     protected abstract String getDialogTitle();
+
+    protected void updateText() {
+        costTextView.setText(INFO_TEXT_DEST + currentEntity.amount);
+    }
 
 }
