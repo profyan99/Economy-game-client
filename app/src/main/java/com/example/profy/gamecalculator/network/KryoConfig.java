@@ -6,7 +6,7 @@ import com.esotericsoftware.kryonet.EndPoint;
 import java.util.List;
 import java.util.Objects;
 
-/**4
+/**
  * Created by profy on 13.07.2018.
  */
 
@@ -24,13 +24,22 @@ public class KryoConfig {
         kryo.register(double[].class);
         kryo.register(List.class);
         kryo.register(Identifier.class);
-    }
-
-
-    public static class Prices {
-        public double[] pricesToSell;
-        public double[] pricesToBuy;
-        public int[] quantities;
+        kryo.register(Entity.class);
+        kryo.register(ResourceData.class);
+        kryo.register(MoneyData.class);
+        kryo.register(ProductData.class);
+        kryo.register(RequestResourceListDto.class);
+        kryo.register(ResourceListDto.class);
+        kryo.register(ResourceBuyDto.class);
+        kryo.register(RequestProductListDto.class);
+        kryo.register(ProductListDto.class);
+        kryo.register(ProductSellDto.class);
+        kryo.register(RequestPlayerInformation.class);
+        kryo.register(PlayerInformation.class);
+        kryo.register(ProductTransferDto.class);
+        kryo.register(ResourceTransferDto.class);
+        kryo.register(MoneyTransferDto.class);
+        kryo.register(TransactionStatus.class);
     }
 
     public static class Entity {
@@ -46,10 +55,6 @@ public class KryoConfig {
         public String toString() {
             return name;
         }
-    }
-
-    public static class EntityListDto<T extends Entity> {
-        public List<T> entities;
     }
 
     public static class ResourceData extends Entity {
@@ -95,6 +100,7 @@ public class KryoConfig {
             }
         }
     }
+
 
     public static class RequestResourceListDto {
 
@@ -162,7 +168,7 @@ public class KryoConfig {
         public int amount;
     }
 
-    public static class TransferStatus {
+    public static class TransactionStatus {
         public boolean isSuccess;
         public String error;
     }

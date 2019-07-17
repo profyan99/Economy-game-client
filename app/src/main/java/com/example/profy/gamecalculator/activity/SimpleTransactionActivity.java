@@ -73,8 +73,8 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
         return R.layout.activity_resources;
     }
 
-    protected void updateEntities(KryoConfig.EntityListDto<T> entityListDto) {
-        entityData = entityListDto.entities;
+    protected void updateEntities(List<T> entityListDto) {
+        entityData = entityListDto;
         adapter.clear();
         adapter.addAll(entityData);
         if (currentEntity != null) {
@@ -92,6 +92,5 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
     protected abstract void retrieveEntities();
 
     protected abstract String getDialogTitle();
-
 
 }

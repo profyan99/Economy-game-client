@@ -95,8 +95,8 @@ public abstract class SimpleTransferActivity<T extends KryoConfig.Entity> extend
         showTransactionDialog("Идентификатор получателя", nfcHandler);
     }
 
-    protected void updateEntities(KryoConfig.EntityListDto<T> entityListDto) {
-        entityData = entityListDto.entities;
+    protected void updateEntities(List<T> entityListDto) {
+        entityData = entityListDto;
         adapter.clear();
         adapter.addAll(entityData);
         if (currentEntity != null) {
@@ -106,21 +106,5 @@ public abstract class SimpleTransferActivity<T extends KryoConfig.Entity> extend
                     .orElse(currentEntity);
 
         }
-    }
-
-    @Override
-    public void transferStatus(KryoConfig.TransferStatus transferStatus) {
-        StringBuilder contentBuilder = new StringBuilder();
-        contentBuilder
-                .append("Выполнено: \t")
-                .append(transferStatus.isSuccess ? "Успешно" : "Ошибка")
-                .append("\n");
-        if(!transferStatus.isSuccess)  {
-            contentBuilder
-                    .append("Ошибка: \t")
-                    .append(transferStatus.error);
-
-        }
-        showInformationDialog("Результат трансфера", contentBuilder.toString());
     }
 }

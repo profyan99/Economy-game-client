@@ -39,7 +39,17 @@ public class KryoClient {
             @Override
             public void received(Connection connection, Object object) {
                 Log.d("kryo", "RECEIVED: " + object.toString() + " type:" + object.getClass().getCanonicalName());
-                Log.d("kryo", "Invalid Message type");
+                if(object instanceof KryoConfig.ProductListDto) {
+                    kryoInterface.updateProducts((KryoConfig.ProductListDto) object);
+                } else if(object instanceof KryoConfig.ResourceListDto) {
+                    kryoInterface.updateResources((KryoConfig.ResourceListDto) object);
+                } else if(object instanceof KryoConfig.PlayerInformation) {
+                    kryoInterface.playerInformation((KryoConfig.PlayerInformation) object);
+                } else if(object instanceof KryoConfig.TransactionStatus) {
+                    kryoInterface.transferStatus((KryoConfig.TransactionStatus) object);
+                } else {
+                    Log.d("kryo", "Invalid Message type");
+                }
             }
 
             @Override

@@ -6,11 +6,11 @@ package com.example.profy.gamecalculator.network;
 
 public interface KryoInterface {
 
-    void updateProducts(KryoConfig.EntityListDto<KryoConfig.ProductData> productListDto);
+    void updateProducts(KryoConfig.ProductListDto productListDto);
 
-    void updateResources(KryoConfig.EntityListDto<KryoConfig.ResourceData> resourceListDto);
+    void updateResources(KryoConfig.ResourceListDto resourceListDto);
 
     void playerInformation(KryoConfig.PlayerInformation playerInformation);
 
-    void transferStatus(KryoConfig.TransferStatus transferStatus);
+    void transferStatus(KryoConfig.TransactionStatus transactionStatus);
 }

@@ -209,18 +209,29 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     }
 
     @Override
-    public void updateProducts(KryoConfig.EntityListDto<KryoConfig.ProductData> productListDto) {
+    public void updateProducts(KryoConfig.ProductListDto productListDto) {
 
     }
 
     @Override
-    public void updateResources(KryoConfig.EntityListDto<KryoConfig.ResourceData> resourceListDto) {
+    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
 
     }
 
     @Override
-    public void transferStatus(KryoConfig.TransferStatus transferStatus) {
+    public void transferStatus(KryoConfig.TransactionStatus transactionStatus) {
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder
+                .append("Выполнено: \t")
+                .append(transactionStatus.isSuccess ? "Успешно" : "Ошибка")
+                .append("\n");
+        if(!transactionStatus.isSuccess)  {
+            contentBuilder
+                    .append("Ошибка: \t")
+                    .append(transactionStatus.error);
 
+        }
+        showInformationDialog("Результат транзакции", contentBuilder.toString());
     }
 
     @Override

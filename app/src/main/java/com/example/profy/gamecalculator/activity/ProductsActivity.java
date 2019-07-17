@@ -18,12 +18,6 @@ public class ProductsActivity extends SimpleTransactionActivity<KryoConfig.Produ
 
         ((TextView) findViewById(R.id.resourceTitleText)).setText("Станция продажи товара");
         ((Button) findViewById(R.id.resourceButton)).setText("Продать");
-
-        KryoConfig.EntityListDto<KryoConfig.ProductData> prods = new KryoConfig.EntityListDto<>();
-        prods.entities = new ArrayList<>();
-        prods.entities.add(new KryoConfig.ProductData(1000, "Plane"));
-        prods.entities.add(new KryoConfig.ProductData(50, "Auto"));
-        updateEntities(prods);
     }
 
     @Override
@@ -47,7 +41,7 @@ public class ProductsActivity extends SimpleTransactionActivity<KryoConfig.Produ
     }
 
     @Override
-    public void updateProducts(KryoConfig.EntityListDto<KryoConfig.ProductData> productListDto) {
-        updateEntities(productListDto);
+    public void updateProducts(KryoConfig.ProductListDto productListDto) {
+        updateEntities(productListDto.products);
     }
 }

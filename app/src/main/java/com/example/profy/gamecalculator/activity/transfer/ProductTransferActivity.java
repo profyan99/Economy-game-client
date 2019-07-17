@@ -33,7 +33,7 @@ public class ProductTransferActivity extends SimpleTransferActivity<KryoConfig.P
     }
 
     @Override
-    public void updateProducts(KryoConfig.EntityListDto<KryoConfig.ProductData> productListDto) {
-        updateEntities(productListDto);
+    public void updateProducts(KryoConfig.ProductListDto productListDto) {
+        updateEntities(productListDto.products);
     }
 }

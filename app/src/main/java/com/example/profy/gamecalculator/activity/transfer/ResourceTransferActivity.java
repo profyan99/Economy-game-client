@@ -34,7 +34,7 @@ public class ResourceTransferActivity extends SimpleTransferActivity<KryoConfig.
     }
 
     @Override
-    public void updateResources(KryoConfig.EntityListDto<KryoConfig.ResourceData> resourceListDto) {
-        updateEntities(resourceListDto);
+    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
+        updateEntities(resourceListDto.resources);
     }
 }

@@ -19,12 +19,6 @@ public class ResourcesActivity extends SimpleTransactionActivity<KryoConfig.Reso
 
         ((TextView) findViewById(R.id.resourceTitleText)).setText("Станция покупки ресурсов");
         ((Button) findViewById(R.id.resourceButton)).setText("Купить");
-
-        KryoConfig.EntityListDto<KryoConfig.ResourceData> res = new KryoConfig.EntityListDto<>();
-        res.entities = new ArrayList<>();
-        res.entities.add(new KryoConfig.ResourceData(10, "Wood"));
-        res.entities.add(new KryoConfig.ResourceData(50, "Steal"));
-        updateResources(res);
     }
 
     @Override
@@ -48,7 +42,7 @@ public class ResourcesActivity extends SimpleTransactionActivity<KryoConfig.Reso
     }
 
     @Override
-    public void updateResources(KryoConfig.EntityListDto<KryoConfig.ResourceData> resourceListDto) {
-        updateEntities(resourceListDto);
+    public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
+        updateEntities(resourceListDto.resources);
     }
 }
