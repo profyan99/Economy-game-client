@@ -6,12 +6,17 @@ import android.widget.TextView;
 
 import com.example.profy.gamecalculator.R;
 import com.example.profy.gamecalculator.network.KryoConfig;
+import com.example.profy.gamecalculator.network.NetworkService;
 
 public class ProductTransferActivity extends SimpleTransferActivity<KryoConfig.ProductData> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        receiver.addHandler(NetworkService.PRODUCT_LIST_ACTION, Obj -> {
+            updateProducts((KryoConfig.ProductListDto) Obj);
+        });
 
         ((TextView) findViewById(R.id.transferTitleText)).setText("Трансфер товаров");
     }

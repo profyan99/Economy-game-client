@@ -9,16 +9,17 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.minlog.Log;
 
 import java.io.IOException;
 import java.io.Serializable;
 
+import static com.example.profy.gamecalculator.network.KryoConfig.SERVER_PORT;
 import static com.example.profy.gamecalculator.network.KryoConfig.SERVER_PORT_UDP;
 
 public class NetworkService extends Service implements KryoInterface {
@@ -47,6 +48,7 @@ public class NetworkService extends Service implements KryoInterface {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.set(Log.LEVEL_TRACE);
         client = new Client();
         KryoConfig.register(client);
         client.start();
@@ -54,33 +56,40 @@ public class NetworkService extends Service implements KryoInterface {
         client.addListener(new Listener.ThreadedListener(new Listener() {
             @Override
             public void connected(Connection connection) {
-                Log.d("kryo", "Connected");
+                Log.debug("Connected");
+                //Log.d("kryo", "Connected");
             }
 
             @Override
             public void disconnected(Connection connection) {
-                Log.d("kryo", "Disconnected");
+                Log.debug("Disconnected");
+                //Log.d("kryo", "Disconnected");
 
             }
 
 
             @Override
             public void received(Connection connection, Object object) {
-                Log.d("kryo", "RECEIVED: " + object.toString() + " type:" + object.getClass().getCanonicalName());
+                Log.debug("Received: " + object.toString());
+                //Log.d("kryo", "RECEIVED: " + object.toString() + " type:" + object.getClass().getCanonicalName());
                 if(object instanceof KryoConfig.ProductListDto) {
                     Intent intent = new Intent(PRODUCT_LIST_ACTION);
                     intent.putExtra(RETRIEVE_DATA, (Serializable) object);
+                    sendBroadcast(intent);
                 } else if(object instanceof KryoConfig.ResourceListDto) {
                     Intent intent = new Intent(RESOURCE_LIST_ACTION);
                     intent.putExtra(RETRIEVE_DATA, (Serializable) object);
+                    sendBroadcast(intent);
                 } else if(object instanceof KryoConfig.PlayerInformation) {
                     Intent intent = new Intent(PLAYER_INFORMATION_ACTION);
                     intent.putExtra(RETRIEVE_DATA, (Serializable) object);
+                    sendBroadcast(intent);
                 } else if(object instanceof KryoConfig.TransactionStatus) {
                     Intent intent = new Intent(TRANSACTION_STATUS_ACTION);
                     intent.putExtra(RETRIEVE_DATA, (Serializable) object);
+                    sendBroadcast(intent);
                 } else {
-                    Log.d("kryo", "Invalid Message type");
+                    Log.debug("kryo", "Invalid Message type");
                 }
             }
 
@@ -93,16 +102,16 @@ public class NetworkService extends Service implements KryoInterface {
         ClientTask clientTask = new ClientTask(client);
         clientTask.execute();
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        /*Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (client != null) {
                 client.stop();
             }
-        }));
+        }));*/
         return super.onStartCommand(intent, flags, startId);
     }
 
     public void sendData(Object o, Context context) {
-        Log.d("kryo", "Send data: " + o.toString());
+        //Log.d("kryo", "Send data: " + o.toString());
         /*if(!client.isConnected()) {
             Toast.makeText(context, "Ошибка подключения", Toast.LENGTH_LONG).show();
         } else {
@@ -117,15 +126,15 @@ public class NetworkService extends Service implements KryoInterface {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(getClass().getName(), "On Destroy -------");
-        if (client != null && client.isConnected()) {
+        //Log.d(getClass().getName(), "On Destroy -------");
+        /*if (client != null && client.isConnected()) {
             client.stop();
             try {
                 client.dispose();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 
     @Override
@@ -158,11 +167,11 @@ public class NetworkService extends Service implements KryoInterface {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                Log.d("kryo", "Connecting...");
-                client.connect(5000, KryoConfig.ADDRESS, KryoConfig.SERVER_PORT, SERVER_PORT_UDP);
-                Log.d("kryo", "Connected");
+                //Log.d("kryo", "Connecting...");
+                client.connect(5000, KryoConfig.ADDRESS, SERVER_PORT, SERVER_PORT_UDP);
+                //Log.d("kryo", "Connected");
             } catch (IOException e) {
-                Log.d("kryo", "Error: " + e.getMessage());
+                Log.debug("kryo", "Error: " + e.getMessage());
             }
             return null;
         }
@@ -170,7 +179,7 @@ public class NetworkService extends Service implements KryoInterface {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Log.d(getClass().getName(), "End ClientTask");
+            Log.debug(getClass().getName(), "End ClientTask");
         }
     }
 
@@ -193,12 +202,12 @@ public class NetworkService extends Service implements KryoInterface {
 
         @Override
         protected Void doInBackground(Void... objects) {
-            Log.d(getClass().getName(), "DO IN BACKGROUND: "  + message.toString());
+            //Log.d(getClass().getName(), "DO IN BACKGROUND: "  + message.toString());
             if(!client.isConnected()) {
-                Log.d(getClass().getName(), "DISCONNECTED: "  + message.toString());
+                //Log.d(getClass().getName(), "DISCONNECTED: "  + message.toString());
                 publishProgress();
             } else {
-                Log.d(getClass().getName(), "MESSAGE: "  + message.toString());
+                //Log.d(getClass().getName(), "MESSAGE: "  + message.toString());
                 client.sendTCP(message);
             }
             return null;

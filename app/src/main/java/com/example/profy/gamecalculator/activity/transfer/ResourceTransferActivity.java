@@ -7,12 +7,17 @@ import android.widget.TextView;
 
 import com.example.profy.gamecalculator.R;
 import com.example.profy.gamecalculator.network.KryoConfig;
+import com.example.profy.gamecalculator.network.NetworkService;
 
 public class ResourceTransferActivity extends SimpleTransferActivity<KryoConfig.ResourceData> {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        receiver.addHandler(NetworkService.RESOURCE_LIST_ACTION, Obj -> {
+            updateResources((KryoConfig.ResourceListDto) Obj);
+        });
 
         ((TextView) findViewById(R.id.transferTitleText)).setText("Трансфер ресурсов");
     }

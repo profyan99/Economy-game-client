@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.example.profy.gamecalculator.R;
 import com.example.profy.gamecalculator.network.KryoConfig;
+import com.example.profy.gamecalculator.network.NetworkService;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,9 @@ public class ProductsActivity extends SimpleTransactionActivity<KryoConfig.Produ
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        receiver.addHandler(NetworkService.PRODUCT_LIST_ACTION, Obj -> {
+            updateProducts((KryoConfig.ProductListDto) Obj);
+        });
 
         ((TextView) findViewById(R.id.resourceTitleText)).setText("Станция продажи товара");
         ((Button) findViewById(R.id.resourceButton)).setText("Продать");
