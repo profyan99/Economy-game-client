@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/transferTitleText"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:layout_marginTop="32dp"
+        android:background="#3F51B5"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Трансфер ресурсов"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/transferButton"
+        android:layout_width="152dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="284dp"
+        android:background="#3F51B5"
+        android:onClick="resolveTransaction"
+        android:text="Перевести"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transferEdit" />
+
+    <EditText
+        android:id="@+id/transferEdit"
+        android:layout_width="200dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="68dp"
+        android:ems="10"
+        android:inputType="numberSigned"
+        android:textColor="#3F51B5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transferSpinner"
+        android:importantForAutofill="no" />
+
+    <Spinner
+        android:id="@+id/transferSpinner"
+        android:layout_width="200dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="36dp"
+        android:popupBackground="@android:color/background_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transferTitleText" />
+
+    <TextView
+        android:id="@+id/transferTypeText"
+        android:layout_width="120dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="36dp"
+        android:text="Тип"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="#3F51B5"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/transferEdit"
+        app:layout_constraintHorizontal_bias="0.507"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transferTitleText" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="120dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="70dp"
+        android:text="Количество"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        android:textColor="#3F51B5"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/transferEdit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transferTypeText" />
+
+    <Button
+        android:id="@+id/transferInput1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:background="#3F51B5"
+        android:onClick="inputFirstPersonId"
+        android:text="Ввести"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.869"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transferEdit" />
+
+    <TextView
+        android:id="@+id/transferView1"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="92dp"
+        android:text="ID переводящего:"
+        android:textAlignment="viewStart"
+        android:textColor="#3F51B5"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/transferInput1"
+        app:layout_constraintHorizontal_bias="0.186"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <Button
+        android:id="@+id/transferInput2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="168dp"
+        android:background="#3F51B5"
+        android:onClick="inputSecondPersonId"
+        android:text="Ввести"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.869"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transferEdit" />
+
+    <TextView
+        android:id="@+id/transferView2"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="176dp"
+        android:text="ID переводящего:"
+        android:textAlignment="viewStart"
+        android:textColor="#3F51B5"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/transferInput1"
+        app:layout_constraintHorizontal_bias="0.187"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+</android.support.constraint.ConstraintLayout>

@@ -1,40 +1,35 @@
-package com.example.profy.gamecalculator;
+package com.example.profy.gamecalculator.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.IntentSender;
-import android.database.Cursor;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.MifareClassic;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.profy.gamecalculator.R;
+import com.example.profy.gamecalculator.activity.transfer.MoneyTransferActivity;
+import com.example.profy.gamecalculator.activity.transfer.ProductTransferActivity;
+import com.example.profy.gamecalculator.activity.transfer.ResourceTransferActivity;
 import com.example.profy.gamecalculator.network.KryoClient;
 import com.example.profy.gamecalculator.network.KryoConfig;
 import com.example.profy.gamecalculator.network.KryoInterface;
+import com.example.profy.gamecalculator.util.IdentificationAdapter;
 import com.example.profy.gamecalculator.util.NfcManager;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public abstract class BaseActivity extends AppCompatActivity implements Serializable, KryoInterface {
 
@@ -44,6 +39,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     protected NfcAdapter adapter;
     protected KryoClient kryoClient;
     protected AlertDialog currentAlertDialog;
+    protected IdentificationAdapter nfcHandler;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,10 +77,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         //init client-server connection
         kryoClient = new KryoClient(this);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if(currentAlertDialog != null && currentAlertDialog.isShowing()) {
+            if (currentAlertDialog != null && currentAlertDialog.isShowing()) {
                 runOnUiThread(() -> currentAlertDialog.cancel());
             }
-            if(kryoClient != null) {
+            if (kryoClient != null) {
                 kryoClient.stop();
             }
         }));
@@ -99,12 +95,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
      */
     protected abstract int getLayoutResourceId();
 
-    /**
-     * Called, when nfc was successfully read
-     *
-     * @param cardId 16 bytes nfc identifier
-     */
-    protected abstract void resolveNfc(String cardId);
 
     @Override
     public void onResume() {
@@ -141,14 +131,19 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             try {
                 String cardId = NfcManager.getNfcCardData(intent);
                 Toast.makeText(this, "Card id: " + cardId, Toast.LENGTH_LONG).show();
-                resolveNfc(cardId);
+                if(nfcHandler != null) {
+                    nfcHandler.handle(cardId);
+                    if(currentAlertDialog != null && currentAlertDialog.isShowing()) {
+                        currentAlertDialog.cancel();
+                    }
+                }
             } catch (IOException e) {
                 Toast.makeText(this, "Error getting nfc data", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    protected void showTransactionDialog(String title, Consumer<Integer> cardConsumer) {
+    protected void showTransactionDialog(String title, IdentificationAdapter handler) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater factory = getLayoutInflater();
         final View textEntryView = factory.inflate(R.layout.alert_transaction, null);
@@ -164,10 +159,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
                 Toast.makeText(this, "Введите сначала id карты\n или воспользуйтесь nfc",
                         Toast.LENGTH_SHORT).show();
             } else {
-                cardConsumer.accept(Integer.valueOf(editText.getText().toString()));
+                handler.handle(Integer.valueOf(editText.getText().toString()));
             }
         });
         builder.setNegativeButton("Отмена", (dialogInterface, i) -> {
+            nfcHandler = null;
             dialogInterface.cancel();
         });
 
@@ -175,40 +171,41 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         currentAlertDialog.show();
     }
 
+    protected void showInformationDialog(String title, String content) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title)
+                .setMessage(content)
+                .setCancelable(true)
+                .setNegativeButton("Ок", (dialog, id) -> dialog.cancel());
 
-    @Override
-    public void message(String message) {
-
+        currentAlertDialog = builder.create();
+        currentAlertDialog.show();
     }
 
     @Override
-    public void newCycle(KryoConfig.Prices newCycle) {
-
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
-    public void corpAccount(KryoConfig.CorpAccount newCycle) {
-
-    }
-
-    @Override
-    public void cargo(KryoConfig.PlayerInfo newCycle) {
-
-    }
-
-    @Override
-    public void statusTransaction(KryoConfig.StatusTransaction newCycle) {
-
-    }
-
-    @Override
-    public void statusMoneyTransfer(KryoConfig.StatusMoneyTransfer newCycle) {
-
-    }
-
-    @Override
-    public void statusCargoTransfer(KryoConfig.StatusCargoTransfer newCycle) {
-
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.account_information) {
+            IdentificationAdapter handler = cardId -> {
+                nfcHandler = null;
+                sendRequestPlayerInformation(cardId);
+            };
+            nfcHandler = handler;
+            showTransactionDialog("Информация об аккаунте", handler);
+        } else if (id == R.id.transfer_money) {
+            startActivity(new Intent(this, MoneyTransferActivity.class));
+        } else if (id == R.id.transfer_resources) {
+            startActivity(new Intent(this, ResourceTransferActivity.class));
+        } else if (id == R.id.transfer_products) {
+            startActivity(new Intent(this, ProductTransferActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -221,17 +218,67 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
 
     }
 
-    protected KryoConfig.Identifier getIdentifier(String id) {
+    @Override
+    public void transferStatus(KryoConfig.TransferStatus transferStatus) {
+
+    }
+
+    @Override
+    public void playerInformation(KryoConfig.PlayerInformation playerInformation) {
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder
+                .append("Компания: \t\t")
+                .append(playerInformation.name)
+                .append("\n")
+                .append("Счет: \t\t")
+                .append(playerInformation.money)
+                .append("\n\n")
+                .append("-------------------------")
+                .append("\n\n")
+                .append("Товары: ")
+                .append("\n");
+
+        for (KryoConfig.ProductData product : playerInformation.products) {
+            contentBuilder
+                    .append("\t - ")
+                    .append(product.name)
+                    .append("\t")
+                    .append(product.amount)
+                    .append("\n");
+        }
+        contentBuilder
+                .append("\n")
+                .append("Ресурсы: ")
+                .append("\n");
+
+        for (KryoConfig.ResourceData resource : playerInformation.resources) {
+            contentBuilder
+                    .append("\t - ")
+                    .append(resource.name)
+                    .append("\t")
+                    .append(resource.amount)
+                    .append("\n");
+        }
+        showInformationDialog("Информация об аккаунте", contentBuilder.toString());
+    }
+
+    public static KryoConfig.Identifier getIdentifier(String id) {
         KryoConfig.Identifier identifier = new KryoConfig.Identifier();
         identifier.byRFID = true;
         identifier.rfid = id;
         return identifier;
     }
 
-    protected KryoConfig.Identifier getIdentifier(int id) {
+    public static KryoConfig.Identifier getIdentifier(int id) {
         KryoConfig.Identifier identifier = new KryoConfig.Identifier();
         identifier.byRFID = false;
         identifier.plain = id;
         return identifier;
+    }
+
+    private void sendRequestPlayerInformation(KryoConfig.Identifier identifier) {
+        KryoConfig.RequestPlayerInformation requestPlayerInformation = new KryoConfig.RequestPlayerInformation();
+        requestPlayerInformation.id = identifier;
+        kryoClient.sendData(requestPlayerInformation, this);
     }
 }

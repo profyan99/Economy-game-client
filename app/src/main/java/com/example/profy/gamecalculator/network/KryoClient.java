@@ -29,35 +29,17 @@ public class KryoClient {
             @Override
             public void connected(Connection connection) {
                 Log.d("kryo", "Connected");
-                kryoInterface.message("Successfully connected");
             }
 
             @Override
             public void disconnected(Connection connection) {
-                kryoInterface.message("Disconnected");
                 Log.d("kryo", "Disconnected");
             }
 
             @Override
             public void received(Connection connection, Object object) {
                 Log.d("kryo", "RECEIVED: " + object.toString() + " type:" + object.getClass().getCanonicalName());
-                if (object instanceof KryoConfig.Prices) {
-                    kryoInterface.newCycle((KryoConfig.Prices) object);
-                } else if (object instanceof KryoConfig.CorpAccount) {
-                    kryoInterface.corpAccount((KryoConfig.CorpAccount) object);
-                } else if (object instanceof KryoConfig.PlayerInfo) {
-                    kryoInterface.cargo((KryoConfig.PlayerInfo) object);
-                } else if (object instanceof KryoConfig.StatusTransaction) {
-                    kryoInterface.statusTransaction((KryoConfig.StatusTransaction) object);
-                } else if (object instanceof KryoConfig.StatusMoneyTransfer) {
-                    kryoInterface.statusMoneyTransfer((KryoConfig.StatusMoneyTransfer) object);
-                } else if (object instanceof KryoConfig.StatusCargoTransfer) {
-                    kryoInterface.statusCargoTransfer((KryoConfig.StatusCargoTransfer) object);
-
-                } else {
-                    Log.d("kryo", "Invalid Message type");
-                }
-
+                Log.d("kryo", "Invalid Message type");
             }
 
             @Override

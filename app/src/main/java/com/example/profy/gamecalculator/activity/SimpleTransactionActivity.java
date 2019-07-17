@@ -1,6 +1,5 @@
-package com.example.profy.gamecalculator;
+package com.example.profy.gamecalculator.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -11,7 +10,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.profy.gamecalculator.R;
 import com.example.profy.gamecalculator.network.KryoConfig;
+import com.example.profy.gamecalculator.util.IdentificationAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
     protected EditText amountEditText;
     protected TextView costTextView;
     protected List<T> entityData;
-    protected  ArrayAdapter<T> adapter;
+    protected ArrayAdapter<T> adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,8 +33,7 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
         costTextView = findViewById(R.id.resourceText);
         entityData = new ArrayList<>();
 
-        //TODO prod
-        //retrieveEntities();
+        retrieveEntities();
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, entityData);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -42,7 +42,7 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
             public void onItemSelected(AdapterView<?> parent,
                                        View itemSelected, int selectedItemPosition, long selectedId) {
                 currentEntity = entityData.get(selectedItemPosition);
-                costTextView.setText("Стоимость за одну штуку: " + currentEntity.cost);
+                costTextView.setText("Стоимость за одну штуку: " + currentEntity.amount);
             }
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -56,26 +56,21 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
             return;
         }
         amount = Integer.parseInt(amountEditText.getText().toString());
-        if(amount <= 0) {
+        if (amount <= 0) {
             Toast.makeText(this, "Величина должна быть > 0", Toast.LENGTH_LONG).show();
             return;
         }
-        showTransactionDialog(getDialogTitle(), (cardId) -> {
-            sendData(getIdentifier(cardId));
-        });
+        IdentificationAdapter handler = cardId -> {
+            nfcHandler = null;
+            sendData(cardId);
+        };
+        nfcHandler = handler;
+        showTransactionDialog(getDialogTitle(), handler);
     }
 
     @Override
     protected int getLayoutResourceId() {
         return R.layout.activity_resources;
-    }
-
-    @Override
-    protected void resolveNfc(String cardId) {
-        if (currentAlertDialog.isShowing()) {
-            currentAlertDialog.cancel();
-            sendData(getIdentifier(cardId));
-        }
     }
 
     protected void updateEntities(KryoConfig.EntityListDto<T> entityListDto) {
@@ -88,7 +83,7 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
                     .findFirst()
                     .orElse(currentEntity);
 
-            costTextView.setText("Стоимость за одну штуку: " + currentEntity.cost);
+            costTextView.setText("Стоимость за одну штуку: " + currentEntity.amount);
         }
     }
 
@@ -97,8 +92,6 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
     protected abstract void retrieveEntities();
 
     protected abstract String getDialogTitle();
-
-
 
 
 }

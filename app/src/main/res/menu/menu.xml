@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/account_information"
+        android:orderInCategory="100"
+        android:title="Информация об аккаунте" />
+
+    <item
+        android:id="@+id/transfer_money"
+        android:orderInCategory="200"
+        android:title="Перевод средств" />
+
+    <item
+        android:id="@+id/transfer_resources"
+        android:orderInCategory="300"
+        android:title="Перевод ресурсов" />
+
+    <item
+        android:id="@+id/transfer_products"
+        android:orderInCategory="300"
+        android:title="Перевод продукции" />
+</menu>

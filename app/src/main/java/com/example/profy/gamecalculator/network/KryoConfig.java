@@ -4,6 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
 import java.util.List;
+import java.util.Objects;
 
 /**4
  * Created by profy on 13.07.2018.
@@ -22,22 +23,7 @@ public class KryoConfig {
         kryo.register(int[].class);
         kryo.register(double[].class);
         kryo.register(List.class);
-        kryo.register(PlanetNames.class);
-        kryo.register(ItemType.class);
-        kryo.register(Prices.class);
         kryo.register(Identifier.class);
-        kryo.register(CheckMoney.class);
-        kryo.register(CorpAccount.class);
-        kryo.register(Transaction.class);
-        kryo.register(StatusTransaction.class);
-        kryo.register(PlayerInfo.class);
-        kryo.register(CheckPlayerInfo.class);
-        kryo.register(MoneyTransfer.class);
-        kryo.register(StatusMoneyTransfer.class);
-        kryo.register(CargoTransfer.class);
-        kryo.register(StatusCargoTransfer.class);
-        kryo.register(NewCycle.class);
-        kryo.register(Register.class);
     }
 
 
@@ -48,11 +34,11 @@ public class KryoConfig {
     }
 
     public static class Entity {
-        public int cost;
+        public int amount;
         public String name;
 
-        public Entity(int cost, String name) {
-            this.cost = cost;
+        public Entity(int amount, String name) {
+            this.amount = amount;
             this.name = name;
         }
 
@@ -73,10 +59,41 @@ public class KryoConfig {
         }
     }
 
+    public static class MoneyData extends Entity {
+
+        public MoneyData(int amount, String name) {
+            super(amount, name);
+        }
+    }
+
     public static class Identifier {
         public boolean byRFID;
-        public String rfid;
+        public String rfid = "";
         public int plain;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Identifier that = (Identifier) o;
+            return byRFID == that.byRFID &&
+                    plain == that.plain &&
+                    Objects.equals(rfid, that.rfid);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(byRFID, rfid, plain);
+        }
+
+        @Override
+        public String toString() {
+            if(byRFID) {
+                return rfid;
+            } else {
+                return "" + plain;
+            }
+        }
     }
 
     public static class RequestResourceListDto {
@@ -108,117 +125,46 @@ public class KryoConfig {
         public List<ProductData> products;
     }
 
-
-
     public static class ProductSellDto {
         public Identifier id;
         public int amount;
         public ProductData product;
     }
 
-
-    //OLD
-
-    public static class CheckMoney {
+    public static class RequestPlayerInformation {
         public Identifier id;
     }
 
-    public static class CorpAccount {
+    public static class PlayerInformation {
         public String name;
-        public double account;
+        public int money;
+        public List<ProductData> products;
+        public List<ResourceData> resources;
     }
 
-
-    public static class Transaction {
-        public ItemType type;
+    public static class ProductTransferDto {
+        public Identifier firstPlayer;
+        public Identifier secondPlayer;
+        public ProductData product;
         public int amount;
-        public Identifier id;
     }
 
-    public static class StatusTransaction {
-        public boolean success;
+    public static class ResourceTransferDto {
+        public Identifier firstPlayer;
+        public Identifier secondPlayer;
+        public ResourceData resource;
+        public int amount;
     }
 
-    public static class CheckPlayerInfo {
-        public Identifier id;
+    public static class MoneyTransferDto {
+        public Identifier firstPlayer;
+        public Identifier secondPlayer;
+        public int amount;
     }
 
-    public static class PlayerInfo {
-        public String name;
-        public String rfid;
-        public int plain;
-        public int[] cargo;
-        public String corp;
-        public double account;
+    public static class TransferStatus {
+        public boolean isSuccess;
+        public String error;
     }
-
-    public static class MoneyTransfer {
-        public Identifier from;
-        public Identifier to;
-        public double amount;
-    }
-
-    public static class StatusMoneyTransfer {
-        public boolean success;
-    }
-
-    public static class CargoTransfer {
-        public Identifier from;
-        public Identifier to;
-        public int quantity;
-        public ItemType type;
-    }
-
-    public static class StatusCargoTransfer {
-        public boolean success;
-    }
-
-    public static class NewCycle {
-    }
-
-    public static class Register{
-        PlayerInfo id;
-    }
-
-    public static class Save{
-    }
-
-    public enum ItemType {
-        quantum_processors("Quantum Processors"),
-        preserved_tachions("Preserved Tachions"),
-        iridium("Iridium"),
-        biomass("Biomass"),
-        antimatter("Antimatter"),
-        nanites("Nanites");
-        private String s;
-
-        ItemType(String s) {
-            this.s = s;
-        }
-
-        public String getS() {
-            return s;
-        }
-    }
-
-    public enum PlanetNames {
-        tarkek("Tarkek"),
-        gleese("Gleese"),
-        yanus("Yanus"),
-        mimas("Mimas"),
-        proximab("Proximab"),
-        osiris("Osiris");
-        private String s;
-
-        PlanetNames(String s) {
-            this.s = s;
-        }
-
-        public String getS() {
-            return s;
-        }
-    }
-
-
 
 }

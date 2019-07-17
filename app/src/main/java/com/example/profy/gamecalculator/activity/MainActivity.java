@@ -1,49 +1,14 @@
-package com.example.profy.gamecalculator;
+package com.example.profy.gamecalculator.activity;
 
-import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.nfc.NfcAdapter;
-import android.nfc.tech.MifareClassic;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.profy.gamecalculator.network.KryoClient;
-import com.example.profy.gamecalculator.network.KryoConfig;
-import com.example.profy.gamecalculator.network.KryoInterface;
-import com.example.profy.gamecalculator.util.NfcManager;
+import com.example.profy.gamecalculator.R;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import static com.example.profy.gamecalculator.network.KryoConfig.CargoTransfer;
-import static com.example.profy.gamecalculator.network.KryoConfig.CheckMoney;
-import static com.example.profy.gamecalculator.network.KryoConfig.CheckPlayerInfo;
-import static com.example.profy.gamecalculator.network.KryoConfig.Identifier;
-import static com.example.profy.gamecalculator.network.KryoConfig.ItemType;
-import static com.example.profy.gamecalculator.network.KryoConfig.MoneyTransfer;
-import static com.example.profy.gamecalculator.network.KryoConfig.PlanetNames;
-import static com.example.profy.gamecalculator.network.KryoConfig.Transaction;
 
 public class MainActivity extends AppCompatActivity implements Serializable {
 
