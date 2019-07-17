@@ -22,7 +22,7 @@ public class ProductsActivity extends SimpleTransactionActivity<KryoConfig.Produ
 
     @Override
     protected void retrieveEntities() {
-        kryoClient.sendData(new KryoConfig.RequestProductListDto(), this);
+        networkService.sendData(new KryoConfig.RequestProductListDto(), this);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class ProductsActivity extends SimpleTransactionActivity<KryoConfig.Produ
         productSellDto.amount = amount;
         productSellDto.id = identifier;
         productSellDto.product = currentEntity;
-        kryoClient.sendData(productSellDto, this);
+        networkService.sendData(productSellDto, this);
     }
 
     @Override

@@ -33,6 +33,6 @@ public class MoneyTransferActivity extends SimpleTransferActivity<KryoConfig.Mon
         moneyTransferDto.amount = amount;
         moneyTransferDto.firstPlayer = firstPerson;
         moneyTransferDto.secondPlayer = secondPerson;
-        kryoClient.sendData(moneyTransferDto, this);
+        networkService.sendData(moneyTransferDto, this);
     }
 }

@@ -2,11 +2,15 @@ package com.example.profy.gamecalculator.activity;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.MifareClassic;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -21,9 +25,9 @@ import com.example.profy.gamecalculator.R;
 import com.example.profy.gamecalculator.activity.transfer.MoneyTransferActivity;
 import com.example.profy.gamecalculator.activity.transfer.ProductTransferActivity;
 import com.example.profy.gamecalculator.activity.transfer.ResourceTransferActivity;
-import com.example.profy.gamecalculator.network.KryoClient;
 import com.example.profy.gamecalculator.network.KryoConfig;
-import com.example.profy.gamecalculator.network.KryoInterface;
+import com.example.profy.gamecalculator.network.NetworkService;
+import com.example.profy.gamecalculator.receivers.NetworkBroadcastReceiver;
 import com.example.profy.gamecalculator.util.IdentificationAdapter;
 import com.example.profy.gamecalculator.util.NfcManager;
 
@@ -31,21 +35,36 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class BaseActivity extends AppCompatActivity implements Serializable, KryoInterface {
+public abstract class BaseActivity extends AppCompatActivity implements Serializable {
 
     protected PendingIntent mPendingIntent;
     protected IntentFilter[] mFilters;
     protected String[][] mTechLists;
     protected NfcAdapter adapter;
-    protected KryoClient kryoClient;
     protected AlertDialog currentAlertDialog;
     protected IdentificationAdapter nfcHandler;
+    protected NetworkService networkService;
+    private boolean mBound;
+    protected NetworkBroadcastReceiver receiver;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, NetworkService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResourceId());
-
+        receiver = new NetworkBroadcastReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(NetworkService.PRODUCT_LIST_ACTION);
+        filter.addAction(NetworkService.PLAYER_INFORMATION_ACTION);
+        filter.addAction(NetworkService.RESOURCE_LIST_ACTION);
+        filter.addAction(NetworkService.TRANSACTION_STATUS_ACTION);
+        registerReceiver(receiver, filter);
         //NFC
         adapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -74,16 +93,13 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         mFilters = new IntentFilter[]{ndef};
         mTechLists = new String[][]{new String[]{MifareClassic.class.getName()}};
 
-        //init client-server connection
-        kryoClient = new KryoClient(this);
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            if (currentAlertDialog != null && currentAlertDialog.isShowing()) {
-                runOnUiThread(() -> currentAlertDialog.cancel());
-            }
-            if (kryoClient != null) {
-                kryoClient.stop();
-            }
-        }));
+        receiver.addHandler(NetworkService.TRANSACTION_STATUS_ACTION, obj -> {
+            transactionStatus((KryoConfig.TransactionStatus) obj);
+        });
+
+        receiver.addHandler(NetworkService.PLAYER_INFORMATION_ACTION, obj -> {
+            playerInformation((KryoConfig.PlayerInformation) obj);
+        });
 
         resolveIntent(getIntent());
     }
@@ -111,6 +127,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (adapter != null && adapter.isEnabled()) {
@@ -121,8 +143,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     @Override
     protected void onStop() {
         super.onStop();
-        if (kryoClient != null) {
-            kryoClient.stop();
+
+        if (mBound) {
+            unbindService(mConnection);
+            mBound = false;
         }
     }
 
@@ -131,9 +155,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             try {
                 String cardId = NfcManager.getNfcCardData(intent);
                 Toast.makeText(this, "Card id: " + cardId, Toast.LENGTH_LONG).show();
-                if(nfcHandler != null) {
+                if (nfcHandler != null) {
                     nfcHandler.handle(cardId);
-                    if(currentAlertDialog != null && currentAlertDialog.isShowing()) {
+                    if (currentAlertDialog != null && currentAlertDialog.isShowing()) {
                         currentAlertDialog.cancel();
                     }
                 }
@@ -208,24 +232,21 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
     public void updateProducts(KryoConfig.ProductListDto productListDto) {
 
     }
 
-    @Override
     public void updateResources(KryoConfig.ResourceListDto resourceListDto) {
 
     }
 
-    @Override
-    public void transferStatus(KryoConfig.TransactionStatus transactionStatus) {
+    public void transactionStatus(KryoConfig.TransactionStatus transactionStatus) {
         StringBuilder contentBuilder = new StringBuilder();
         contentBuilder
                 .append("Выполнено: \t")
                 .append(transactionStatus.isSuccess ? "Успешно" : "Ошибка")
                 .append("\n");
-        if(!transactionStatus.isSuccess)  {
+        if (!transactionStatus.isSuccess) {
             contentBuilder
                     .append("Ошибка: \t")
                     .append(transactionStatus.error);
@@ -234,7 +255,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         showInformationDialog("Результат транзакции", contentBuilder.toString());
     }
 
-    @Override
+
     public void playerInformation(KryoConfig.PlayerInformation playerInformation) {
         StringBuilder contentBuilder = new StringBuilder();
         contentBuilder
@@ -290,6 +311,21 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     private void sendRequestPlayerInformation(KryoConfig.Identifier identifier) {
         KryoConfig.RequestPlayerInformation requestPlayerInformation = new KryoConfig.RequestPlayerInformation();
         requestPlayerInformation.id = identifier;
-        kryoClient.sendData(requestPlayerInformation, this);
+        networkService.sendData(requestPlayerInformation, this);
     }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+
+            NetworkService.NetworkBinder binder = (NetworkService.NetworkBinder) service;
+            networkService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 }

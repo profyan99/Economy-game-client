@@ -18,7 +18,7 @@ public class ProductTransferActivity extends SimpleTransferActivity<KryoConfig.P
 
     @Override
     protected void retrieveEntities() {
-        kryoClient.sendData(new KryoConfig.RequestProductListDto(), this);
+        networkService.sendData(new KryoConfig.RequestProductListDto(), this);
     }
 
     @Override
@@ -29,7 +29,7 @@ public class ProductTransferActivity extends SimpleTransferActivity<KryoConfig.P
         productTransferDto.firstPlayer = firstPerson;
         productTransferDto.secondPlayer = secondPerson;
         productTransferDto.product = currentEntity;
-        kryoClient.sendData(productTransferDto, this);
+        networkService.sendData(productTransferDto, this);
     }
 
     @Override

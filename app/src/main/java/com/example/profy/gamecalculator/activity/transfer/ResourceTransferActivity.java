@@ -19,7 +19,7 @@ public class ResourceTransferActivity extends SimpleTransferActivity<KryoConfig.
 
     @Override
     protected void retrieveEntities() {
-        kryoClient.sendData(new KryoConfig.RequestResourceListDto(), this);
+        networkService.sendData(new KryoConfig.RequestResourceListDto(), this);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ResourceTransferActivity extends SimpleTransferActivity<KryoConfig.
         resourceTransferDto.firstPlayer = firstPerson;
         resourceTransferDto.secondPlayer = secondPerson;
         resourceTransferDto.resource = currentEntity;
-        kryoClient.sendData(resourceTransferDto, this);
+        networkService.sendData(resourceTransferDto, this);
     }
 
     @Override

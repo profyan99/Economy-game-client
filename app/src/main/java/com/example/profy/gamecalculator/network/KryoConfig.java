@@ -3,6 +3,8 @@ package com.example.profy.gamecalculator.network;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +16,7 @@ public class KryoConfig {
 
     static final int SERVER_PORT = 54555;
     static final int SERVER_PORT_UDP = 54777;
-    static final String ADDRESS = "194.190.163.136";//"192.168.43.232";
+    static final String ADDRESS = "192.168.1.2";//"192.168.43.232";
 
 
     static void register(EndPoint point) {
@@ -40,9 +42,10 @@ public class KryoConfig {
         kryo.register(ResourceTransferDto.class);
         kryo.register(MoneyTransferDto.class);
         kryo.register(TransactionStatus.class);
+        kryo.register(ArrayList.class);
     }
 
-    public static class Entity {
+    public static class Entity implements Serializable {
         public int amount;
         public String name;
 
@@ -51,30 +54,42 @@ public class KryoConfig {
             this.name = name;
         }
 
+        public Entity() {
+        }
+
         @Override
         public String toString() {
             return name;
         }
     }
 
-    public static class ResourceData extends Entity {
+    public static class ResourceData extends Entity implements Serializable {
 
         public ResourceData(int cost, String name) {
             super(cost, name);
         }
+
+        public ResourceData() {
+        }
     }
 
-    public static class MoneyData extends Entity {
+    public static class MoneyData extends Entity implements Serializable {
 
         public MoneyData(int amount, String name) {
             super(amount, name);
         }
+
+        public MoneyData() {
+        }
     }
 
-    public static class Identifier {
+    public static class Identifier implements Serializable {
         public boolean byRFID;
         public String rfid = "";
         public int plain;
+
+        public Identifier() {
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -93,7 +108,7 @@ public class KryoConfig {
 
         @Override
         public String toString() {
-            if(byRFID) {
+            if (byRFID) {
                 return rfid;
             } else {
                 return "" + plain;
@@ -102,73 +117,83 @@ public class KryoConfig {
     }
 
 
-    public static class RequestResourceListDto {
+    public static class RequestResourceListDto implements Serializable {
 
     }
 
-    public static class ResourceListDto {
+    public static class ResourceListDto implements Serializable {
         public List<ResourceData> resources;
+
+        public ResourceListDto(List<ResourceData> resources) {
+            this.resources = resources;
+        }
+
+        public ResourceListDto() {
+        }
     }
 
-    public static class ResourceBuyDto {
+    public static class ResourceBuyDto implements Serializable {
         public Identifier id;
         public int amount;
         public ResourceData resource;
     }
 
-    public static class ProductData extends Entity{
+    public static class ProductData extends Entity implements Serializable {
 
         public ProductData(int cost, String name) {
             super(cost, name);
         }
+
+        public ProductData() {
+        }
     }
 
-    public static class RequestProductListDto {
+    public static class RequestProductListDto implements Serializable {
 
     }
 
-    public static class ProductListDto {
+    public static class ProductListDto implements Serializable {
         public List<ProductData> products;
     }
 
-    public static class ProductSellDto {
+    public static class ProductSellDto implements Serializable {
         public Identifier id;
         public int amount;
         public ProductData product;
     }
 
-    public static class RequestPlayerInformation {
+    public static class RequestPlayerInformation implements Serializable {
         public Identifier id;
     }
 
-    public static class PlayerInformation {
+    public static class PlayerInformation implements Serializable {
         public String name;
         public int money;
         public List<ProductData> products;
         public List<ResourceData> resources;
     }
 
-    public static class ProductTransferDto {
+    public static class ProductTransferDto implements Serializable {
         public Identifier firstPlayer;
         public Identifier secondPlayer;
         public ProductData product;
         public int amount;
     }
 
-    public static class ResourceTransferDto {
+    public static class ResourceTransferDto implements Serializable {
         public Identifier firstPlayer;
         public Identifier secondPlayer;
         public ResourceData resource;
         public int amount;
     }
 
-    public static class MoneyTransferDto {
+    public static class MoneyTransferDto implements Serializable {
         public Identifier firstPlayer;
         public Identifier secondPlayer;
         public int amount;
     }
 
-    public static class TransactionStatus {
+    public static class TransactionStatus implements Serializable {
         public boolean isSuccess;
         public String error;
     }

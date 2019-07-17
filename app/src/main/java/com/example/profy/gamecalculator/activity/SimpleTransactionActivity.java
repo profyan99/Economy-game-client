@@ -33,7 +33,7 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
         costTextView = findViewById(R.id.resourceText);
         entityData = new ArrayList<>();
 
-        retrieveEntities();
+        //retrieveEntities();
 
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, entityData);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -51,6 +51,7 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
     }
 
     public void resolveTransaction(View view) {
+        retrieveEntities();
         if (amountEditText.getText().toString().isEmpty() || currentEntity == null) {
             Toast.makeText(this, "Заполните все поля", Toast.LENGTH_LONG).show();
             return;

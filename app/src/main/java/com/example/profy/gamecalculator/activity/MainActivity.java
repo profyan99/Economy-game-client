@@ -1,12 +1,16 @@
 package com.example.profy.gamecalculator.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.example.profy.gamecalculator.R;
+import com.example.profy.gamecalculator.network.NetworkService;
+import com.example.profy.gamecalculator.receivers.NetworkBroadcastReceiver;
 
 import java.io.Serializable;
 
@@ -659,10 +663,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
     }*/
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        startService(new Intent(this, NetworkService.class));
     }
 
     public void setResourceActivity(View view) {
@@ -671,5 +677,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
 
     public void setProductActivity(View view) {
         startActivity(new Intent(this, ProductsActivity.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, NetworkService.class));
     }
 }
