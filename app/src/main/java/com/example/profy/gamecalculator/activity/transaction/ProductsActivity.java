@@ -18,7 +18,7 @@ public class ProductsActivity extends SimpleTransactionActivity<KryoConfig.Produ
             updateEntities(((KryoConfig.ProductListDto) Obj).products);
         });
 
-        ((TextView) findViewById(R.id.resourceTitleText)).setText("Станция продажи товара");
+        ((TextView) findViewById(R.id.resourceTitleText)).setText("Продажа товара");
         ((Button) findViewById(R.id.resourceButton)).setText("Продать");
     }
 

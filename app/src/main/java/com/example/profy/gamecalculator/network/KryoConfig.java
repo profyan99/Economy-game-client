@@ -16,7 +16,7 @@ public class KryoConfig {
 
     static final int SERVER_PORT = 54555;
     static final int SERVER_PORT_UDP = 54777;
-    static final String ADDRESS = "192.168.1.2";//"192.168.43.232";
+    static final String ADDRESS = "192.168.43.232";//"192.168.43.232";
 
 
     static void register(EndPoint point) {
@@ -49,14 +49,15 @@ public class KryoConfig {
         kryo.register(AskSenatorsToVoteDto.class);
         kryo.register(BuySenatorDto.class);
         kryo.register(RequestProductionListDto.class);
-        kryo.register(RequestProductionListDto.class);
         kryo.register(VexelCashingDto.class);
         kryo.register(RequestGameCycle.class);
         kryo.register(GameCycleDto.class);
         kryo.register(BankTransaction.class);
+        kryo.register(StartNewCycle.class);
         kryo.register(RequestStateOrderListDto.class);
         kryo.register(StateOrderDto.class);
         kryo.register(StateOrderListDto.class);
+        kryo.register(ResolveStateOrder.class);
     }
 
     public static class Entity implements Serializable {
@@ -269,9 +270,28 @@ public class KryoConfig {
         public int moneyAmount;
         public ProductData productData;
         public boolean payByVexel;
+
+        public StateOrderDto(int id, int moneyAmount, ProductData productData, boolean payByVexel) {
+            this.id = id;
+            this.moneyAmount = moneyAmount;
+            this.productData = productData;
+            this.payByVexel = payByVexel;
+        }
+
+        public StateOrderDto() {
+        }
     }
 
     public static class StateOrderListDto implements Serializable {
         public List<StateOrderDto> stateOrderList;
+    }
+
+    public static class ResolveStateOrder implements Serializable {
+        public Identifier id;
+        public int orderId;
+    }
+
+    public static class StartNewCycle implements Serializable {
+
     }
 }

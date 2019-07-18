@@ -15,7 +15,7 @@ public class MoneyTransferActivity extends SimpleTransferActivity<KryoConfig.Mon
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ((TextView) findViewById(R.id.transferTitleText)).setText("Трансфер средств");
+        ((TextView) findViewById(R.id.transferTitleText)).setText("Перевод средств");
         findViewById(R.id.transferTypeText).setVisibility(View.INVISIBLE);
         findViewById(R.id.transferSpinner).setVisibility(View.INVISIBLE);
         currentEntity = new KryoConfig.MoneyData(0, "");
@@ -28,7 +28,7 @@ public class MoneyTransferActivity extends SimpleTransferActivity<KryoConfig.Mon
 
     @Override
     protected void sendData() {
-        Log.d( "Product transfer", "Sending data...");
+        Log.d("Product transfer", "Sending data...");
         KryoConfig.MoneyTransferDto moneyTransferDto = new KryoConfig.MoneyTransferDto();
         moneyTransferDto.amount = amount;
         moneyTransferDto.firstPlayer = firstPerson;

@@ -51,7 +51,6 @@ public abstract class SimpleTransactionActivity<T extends KryoConfig.Entity> ext
     }
 
     public void resolveTransaction(View view) {
-        retrieveEntities();
         if (amountEditText.getText().toString().isEmpty() || currentEntity == null) {
             Toast.makeText(this, "Заполните все поля", Toast.LENGTH_LONG).show();
             return;

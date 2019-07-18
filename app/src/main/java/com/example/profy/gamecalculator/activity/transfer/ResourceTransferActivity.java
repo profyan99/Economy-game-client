@@ -19,7 +19,7 @@ public class ResourceTransferActivity extends SimpleTransferActivity<KryoConfig.
             updateEntities(((KryoConfig.ResourceListDto) Obj).resources);
         });
 
-        ((TextView) findViewById(R.id.transferTitleText)).setText("Трансфер ресурсов");
+        ((TextView) findViewById(R.id.transferTitleText)).setText("Перевод ресурсов");
     }
 
     @Override

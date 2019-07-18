@@ -18,7 +18,7 @@ public class ResourcesActivity extends SimpleTransactionActivity<KryoConfig.Reso
         receiver.addHandler(NetworkService.RESOURCE_LIST_ACTION, Obj -> {
             updateEntities(((KryoConfig.ResourceListDto) Obj).resources);
         });
-        ((TextView) findViewById(R.id.resourceTitleText)).setText("Станция покупки ресурсов");
+        ((TextView) findViewById(R.id.resourceTitleText)).setText("Покупка ресурсов");
         ((Button) findViewById(R.id.resourceButton)).setText("Купить");
     }
 

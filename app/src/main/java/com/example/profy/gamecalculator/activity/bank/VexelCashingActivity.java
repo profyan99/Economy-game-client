@@ -17,6 +17,9 @@ public class VexelCashingActivity extends SimpleBankActivity {
         super.onCreate(savedInstanceState);
         ((TextView) findViewById(R.id.bankTitleText)).setText("Пункт обналичивания");
         ((Button) findViewById(R.id.bankButton)).setText("Обналичить");
+        ((TextView) findViewById(R.id.textView6)).setText("ID векселя:");
+        ((TextView) findViewById(R.id.hint_text_view))
+                .setText("Не забудьте после обналичивания забрать вексель у игрока");
         descTextView.setText(INFO_TEXT_DESC);
 
         receiver.addHandler(NetworkService.CYCLE_ACTION, Obj -> {

@@ -18,7 +18,7 @@ public class ProductTransferActivity extends SimpleTransferActivity<KryoConfig.P
             updateEntities(((KryoConfig.ProductListDto) Obj).products);
         });
 
-        ((TextView) findViewById(R.id.transferTitleText)).setText("Трансфер товаров");
+        ((TextView) findViewById(R.id.transferTitleText)).setText("Перевод товаров");
     }
 
     @Override

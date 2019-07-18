@@ -79,16 +79,16 @@ public abstract class SimpleTransferActivity<T extends KryoConfig.Entity> extend
         nfcHandler = cardId -> {
             nfcHandler = null;
             firstPerson = cardId;
-            firstPersonView.setText("ID переводящего: " + firstPerson.toString());
+            firstPersonView.setText("ID отправителя: " + firstPerson.toString());
         };
-        showTransactionDialog("Идентификатор перепереводящего", nfcHandler);
+        showTransactionDialog("Идентификатор отправителя", nfcHandler);
     }
 
     public void inputSecondPersonId(View view) {
         nfcHandler = cardId -> {
             nfcHandler = null;
             secondPerson = cardId;
-            secondPersonView.setText("ID переводящего: " + secondPerson.toString());
+            secondPersonView.setText("ID получателя: " + secondPerson.toString());
         };
         showTransactionDialog("Идентификатор получателя", nfcHandler);
     }

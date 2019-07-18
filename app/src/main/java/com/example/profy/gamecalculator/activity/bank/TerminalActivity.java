@@ -13,14 +13,16 @@ public class TerminalActivity extends SimpleBankActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((TextView) findViewById(R.id.bankTitleText)).setText("Банкомат");
+        ((TextView) findViewById(R.id.bankTitleText)).setText("Банковский терминал");
         ((Button) findViewById(R.id.bankButton)).setText("Применить");
+        ((TextView) findViewById(R.id.hint_text_view))
+                .setText("Положительное значение для снятия, отрицательное для пополнения средств");
         descTextView.setVisibility(View.INVISIBLE);
     }
 
     @Override
     protected String getDialogTitle() {
-        return "Банкомат";
+        return "Банковский терминал";
     }
 
     @Override

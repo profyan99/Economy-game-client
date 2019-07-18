@@ -78,7 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setTitle("Экономическая игра");
+        toolbar.setTitle("Долг и честь");
         toolbar.setSubtitleTextColor(Color.RED);
         toolbar.setSubtitle("Не подключен");
 
@@ -87,11 +87,12 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         adapter = NfcAdapter.getDefaultAdapter(this);
 
         if (adapter == null) {
-            Toast.makeText(this, "NFC not supported", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "NFC не поддерживается", Toast.LENGTH_LONG).show();
         }
 
         if (!adapter.isEnabled()) {
-            Toast.makeText(this, "Enable NFC before using the app", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Включите функцию NFC, прежде чем использовать",
+                    Toast.LENGTH_LONG).show();
         }
 
 
@@ -150,7 +151,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         if (adapter != null && adapter.isEnabled()) {
             adapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         }
-        Log.d("", "OnResume: " + getClass().getName());
     }
 
     @Override
@@ -163,7 +163,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
-        Log.d("", "onDestroy: " + getClass().getName());
     }
 
     @Override
@@ -173,7 +172,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         if (adapter != null && adapter.isEnabled()) {
             adapter.disableForegroundDispatch(this);
         }
-        Log.d("", "onPause: " + getClass().getName());
     }
 
     @Override
@@ -184,7 +182,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             unbindService(mConnection);
             mBound = false;
         }
-        Log.d("", "onStop: " + getClass().getName());
     }
 
     void resolveIntent(Intent intent) {
@@ -297,7 +294,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
                 .append("Мощность производства: \t\t")
                 .append(playerInformation.power)
                 .append("\n\n")
-                .append("-------------------------")
+                .append("--------------------------------------------------")
                 .append("\n\n")
                 .append("Товары: ")
                 .append("\n");
