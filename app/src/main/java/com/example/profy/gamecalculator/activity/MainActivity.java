@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         startActivity(new Intent(this, TerminalActivity.class));
     }
 
+    public void setStateOrderActivity(View view) {
+        startActivity(new Intent(this, StateOrderActivity.class));
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -65,6 +65,21 @@
         app:layout_constraintTop_toBottomOf="@+id/button2" />
 
     <Button
+        android:id="@+id/button6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="232dp"
+        android:background="#2196F3"
+        android:onClick="setStateOrderActivity"
+        android:text="Министерство по откату"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
+
+    <Button
         android:id="@+id/button3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -7,12 +7,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.nfc.tech.MifareClassic;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,7 +35,9 @@ import com.example.profy.gamecalculator.util.NfcManager;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public abstract class BaseActivity extends AppCompatActivity implements Serializable {
 
@@ -46,12 +50,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     protected NetworkService networkService;
     private boolean mBound;
     protected NetworkBroadcastReceiver receiver;
+    protected Toolbar toolbar;
 
     @Override
     protected void onStart() {
         super.onStart();
         Intent intent = new Intent(this, NetworkService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        Log.d("", "OnStart: " + getClass().getName());
     }
 
     @Override
@@ -65,7 +71,18 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         filter.addAction(NetworkService.RESOURCE_LIST_ACTION);
         filter.addAction(NetworkService.TRANSACTION_STATUS_ACTION);
         filter.addAction(NetworkService.CYCLE_ACTION);
+        filter.addAction(NetworkService.DISCONNECT_ACTION);
+        filter.addAction(NetworkService.CONNECT_ACTION);
+        filter.addAction(NetworkService.STATE_ORDERS_ACTION);
         registerReceiver(receiver, filter);
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitle("Экономическая игра");
+        toolbar.setSubtitleTextColor(Color.RED);
+        toolbar.setSubtitle("Не подключен");
+
+
         //NFC
         adapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -102,7 +119,18 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             playerInformation((KryoConfig.PlayerInformation) obj);
         });
 
+        receiver.addHandler(NetworkService.DISCONNECT_ACTION, obj -> {
+            toolbar.setSubtitleTextColor(Color.RED);
+            toolbar.setSubtitle("Не подключен");
+        });
+
+        receiver.addHandler(NetworkService.CONNECT_ACTION, obj -> {
+            toolbar.setSubtitleTextColor(Color.GREEN);
+            toolbar.setSubtitle("Подключен");
+        });
+
         resolveIntent(getIntent());
+        Log.d("", "OnCreate: " + getClass().getName());
     }
 
     /**
@@ -118,9 +146,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     @Override
     public void onResume() {
         super.onResume();
+        receiver.setActive(true);
         if (adapter != null && adapter.isEnabled()) {
             adapter.enableForegroundDispatch(this, mPendingIntent, mFilters, mTechLists);
         }
+        Log.d("", "OnResume: " + getClass().getName());
     }
 
     @Override
@@ -133,14 +163,17 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
+        Log.d("", "onDestroy: " + getClass().getName());
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        receiver.setActive(false);
         if (adapter != null && adapter.isEnabled()) {
             adapter.disableForegroundDispatch(this);
         }
+        Log.d("", "onPause: " + getClass().getName());
     }
 
     @Override
@@ -151,13 +184,14 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             unbindService(mConnection);
             mBound = false;
         }
+        Log.d("", "onStop: " + getClass().getName());
     }
 
     void resolveIntent(Intent intent) {
         if (Objects.equals(intent.getAction(), NfcAdapter.ACTION_TECH_DISCOVERED)) {
             try {
                 String cardId = NfcManager.getNfcCardData(intent);
-                Toast.makeText(this, "Card id: " + cardId, Toast.LENGTH_LONG).show();
+                Log.i("", "Card id: " + cardId);
                 if (nfcHandler != null) {
                     nfcHandler.handle(cardId);
                     if (currentAlertDialog != null && currentAlertDialog.isShowing()) {
@@ -259,6 +293,9 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
                 .append("\n")
                 .append("Счет: \t\t")
                 .append(playerInformation.money)
+                .append("\n")
+                .append("Мощность производства: \t\t")
+                .append(playerInformation.power)
                 .append("\n\n")
                 .append("-------------------------")
                 .append("\n\n")
@@ -316,6 +353,13 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
             NetworkService.NetworkBinder binder = (NetworkService.NetworkBinder) service;
             networkService = binder.getService();
             mBound = true;
+            if (networkService.isConnected()) {
+                toolbar.setSubtitleTextColor(Color.GREEN);
+                toolbar.setSubtitle("Подключен");
+            } else {
+                toolbar.setSubtitleTextColor(Color.RED);
+                toolbar.setSubtitle("Не подключен");
+            }
             retrieveEntities();
         }
 

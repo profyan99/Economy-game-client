@@ -43,8 +43,20 @@ public class KryoConfig {
         kryo.register(ResourceTransferDto.class);
         kryo.register(MoneyTransferDto.class);
         kryo.register(TransactionStatus.class);
+        kryo.register(RequestSenatorsListDto.class);
+        kryo.register(SenatorDto.class);
+        kryo.register(SenatorsListDto.class);
+        kryo.register(AskSenatorsToVoteDto.class);
+        kryo.register(BuySenatorDto.class);
         kryo.register(RequestProductionListDto.class);
-        kryo.register(ProductionDto.class);
+        kryo.register(RequestProductionListDto.class);
+        kryo.register(VexelCashingDto.class);
+        kryo.register(RequestGameCycle.class);
+        kryo.register(GameCycleDto.class);
+        kryo.register(BankTransaction.class);
+        kryo.register(RequestStateOrderListDto.class);
+        kryo.register(StateOrderDto.class);
+        kryo.register(StateOrderListDto.class);
     }
 
     public static class Entity implements Serializable {
@@ -168,6 +180,7 @@ public class KryoConfig {
         public int money;
         public List<ProductData> products;
         public List<ResourceData> resources;
+        public int power;
     }
 
     public static class ProductTransferDto implements Serializable {
@@ -193,6 +206,30 @@ public class KryoConfig {
     public static class TransactionStatus implements Serializable {
         public boolean isSuccess;
         public String error;
+    }
+
+    public static class RequestSenatorsListDto implements Serializable{
+
+    }
+
+    public static class SenatorDto implements Serializable{
+        public String corp;
+        public int level = 0;
+        public int vote = -1;
+    }
+
+    public static class SenatorsListDto implements Serializable{
+        ArrayList<SenatorDto> senators;
+    }
+
+    public static class BuySenatorDto implements Serializable{
+        public Identifier player;
+        public int senator;
+    }
+
+    public static class AskSenatorsToVoteDto implements Serializable{
+        public Identifier player;
+        public boolean vote;
     }
 
     public static class ProductionDto implements Serializable {
@@ -221,5 +258,20 @@ public class KryoConfig {
     public static class BankTransaction implements Serializable {
         public Identifier id;
         public int amount;
+    }
+
+    public static class RequestStateOrderListDto implements Serializable {
+
+    }
+
+    public static class StateOrderDto implements Serializable {
+        public int id;
+        public int moneyAmount;
+        public ProductData productData;
+        public boolean payByVexel;
+    }
+
+    public static class StateOrderListDto implements Serializable {
+        public List<StateOrderDto> stateOrderList;
     }
 }

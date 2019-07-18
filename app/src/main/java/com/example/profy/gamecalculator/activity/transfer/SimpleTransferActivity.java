@@ -38,8 +38,6 @@ public abstract class SimpleTransferActivity<T extends KryoConfig.Entity> extend
 
         entityData = new ArrayList<>();
 
-        retrieveEntities();
-
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, entityData);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         resourceTypeSpinner.setAdapter(adapter);
@@ -90,7 +88,7 @@ public abstract class SimpleTransferActivity<T extends KryoConfig.Entity> extend
         nfcHandler = cardId -> {
             nfcHandler = null;
             secondPerson = cardId;
-            secondPersonView.setText("ID переводящего: " + firstPerson.toString());
+            secondPersonView.setText("ID переводящего: " + secondPerson.toString());
         };
         showTransactionDialog("Идентификатор получателя", nfcHandler);
     }

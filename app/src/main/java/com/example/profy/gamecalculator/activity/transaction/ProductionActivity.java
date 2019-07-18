@@ -7,10 +7,11 @@ import android.widget.TextView;
 
 import com.example.profy.gamecalculator.R;
 import com.example.profy.gamecalculator.network.KryoConfig;
+import com.example.profy.gamecalculator.network.NetworkService;
 
 public class ProductionActivity extends SimpleTransactionActivity<KryoConfig.ProductData> {
 
-    private static final String TEXT_INFO_DESC = "Трудозатраты за шт: ";
+    private static final String TEXT_INFO_DESC = "Трудозатраты за шт: %d";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +19,12 @@ public class ProductionActivity extends SimpleTransactionActivity<KryoConfig.Pro
 
         ((TextView) findViewById(R.id.resourceTitleText)).setText("Производственный цех");
         ((Button) findViewById(R.id.resourceButton)).setText("Создать");
-        costTextView.setText(TEXT_INFO_DESC + 0);
+        costTextView.setText(String.format(TEXT_INFO_DESC, 0, 0));
+
+        receiver.addHandler(NetworkService.PRODUCT_LIST_ACTION, Obj -> {
+            updateEntities(((KryoConfig.ProductListDto) Obj).products);
+        });
+
 
     }
 
@@ -44,6 +50,6 @@ public class ProductionActivity extends SimpleTransactionActivity<KryoConfig.Pro
 
     @Override
     protected void updateText() {
-        costTextView.setText(TEXT_INFO_DESC + currentEntity.amount);
+        costTextView.setText(String.format(TEXT_INFO_DESC, currentEntity.amount));
     }
 }

@@ -27,6 +27,9 @@ public class NetworkService extends Service {
     public static final String PLAYER_INFORMATION_ACTION = "com.example.profy.gamecalculator.network.player_information";
     public static final String TRANSACTION_STATUS_ACTION = "com.example.profy.gamecalculator.network.transaction_status";
     public static final String CYCLE_ACTION = "com.example.profy.gamecalculator.network.cycle";
+    public static final String DISCONNECT_ACTION = "com.example.profy.gamecalculator.network.disconnect";
+    public static final String CONNECT_ACTION = "com.example.profy.gamecalculator.network.connect";
+    public static final String STATE_ORDERS_ACTION = "com.example.profy.gamecalculator.network.state_orders";
     public static final String RETRIEVE_DATA = "data";
 
     private final NetworkBinder networkBinder = new NetworkBinder();
@@ -55,11 +58,16 @@ public class NetworkService extends Service {
             @Override
             public void connected(Connection connection) {
                 Log.debug("Connected");
+                sendBroadcast(new Intent(CONNECT_ACTION));
             }
 
             @Override
             public void disconnected(Connection connection) {
                 Log.debug("Disconnected");
+                sendBroadcast(new Intent(DISCONNECT_ACTION));
+
+                ClientTask clientTask = new ClientTask(client);
+                clientTask.execute();
             }
 
 
@@ -86,8 +94,12 @@ public class NetworkService extends Service {
                     Intent intent = new Intent(CYCLE_ACTION);
                     intent.putExtra(RETRIEVE_DATA, (Serializable) object);
                     sendBroadcast(intent);
+                } else if (object instanceof KryoConfig.StateOrderListDto) {
+                    Intent intent = new Intent(STATE_ORDERS_ACTION);
+                    intent.putExtra(RETRIEVE_DATA, (Serializable) object);
+                    sendBroadcast(intent);
                 } else {
-                    Log.debug("kryo", "Invalid Message type");
+                    Log.debug("kryo", "Undefined message type");
                 }
             }
 
@@ -126,6 +138,12 @@ public class NetworkService extends Service {
         }
     }
 
+
+
+    public boolean isConnected() {
+        return client.isConnected();
+    }
+
     static class ClientTask extends AsyncTask<Void, Void, Void> {
         private Client client;
 
@@ -135,13 +153,22 @@ public class NetworkService extends Service {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            try {
-                Log.debug("kryo", "Connecting...");
-                client.connect(5000, KryoConfig.ADDRESS, SERVER_PORT, SERVER_PORT_UDP);
-                Log.debug("kryo", "Connected");
-            } catch (IOException e) {
-                Log.debug("kryo", "Error: " + e.getMessage());
-                cancel(false);
+            boolean connected = false;
+            while(!connected) {
+                try {
+                    Log.debug("kryo", "Connecting...");
+                    client.connect(5000, KryoConfig.ADDRESS, SERVER_PORT, SERVER_PORT_UDP);
+                    Log.debug("kryo", "Connected");
+                    connected = true;
+                } catch (IOException e) {
+                    Log.debug("kryo", "Error: " + e.getMessage());
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ignored) {
+
+                    }
+                    //cancel(false);
+                }
             }
             return null;
         }

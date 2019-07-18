@@ -35,4 +35,5 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation 'com.esotericsoftware:kryonet:2.22.0-RC1'
     testCompile 'junit:junit:4.12'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 }
