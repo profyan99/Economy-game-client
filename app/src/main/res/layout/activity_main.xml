@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     tools:context="com.example.profy.gamecalculator.activity.MainActivity">
 
+    <Button
+        android:id="@+id/button7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="232dp"
+        android:background="#2196F3"
+        android:onClick="setStateOrderActivity"
+        android:text="Министерство по откату"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button2" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -68,10 +83,10 @@
         android:id="@+id/button6"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="232dp"
+        android:layout_marginTop="288dp"
         android:background="#2196F3"
-        android:onClick="setStateOrderActivity"
-        android:text="Министерство по откату"
+        android:onClick="setPlayerRegisterActivity"
+        android:text="Регистратура"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"

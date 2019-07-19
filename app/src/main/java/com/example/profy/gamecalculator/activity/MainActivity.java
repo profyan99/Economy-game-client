@@ -48,6 +48,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         startActivity(new Intent(this, StateOrderActivity.class));
     }
 
+    public void setPlayerRegisterActivity(View view) {
+        startActivity(new Intent(this, RegisterActivity.class));
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

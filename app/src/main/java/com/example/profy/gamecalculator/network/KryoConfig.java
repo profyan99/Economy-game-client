@@ -58,6 +58,11 @@ public class KryoConfig {
         kryo.register(StateOrderDto.class);
         kryo.register(StateOrderListDto.class);
         kryo.register(ResolveStateOrder.class);
+        kryo.register(CompanyData.class);
+        kryo.register(RequestCompanyDataListDto.class);
+        kryo.register(CompanyDataListDto.class);
+        kryo.register(AddPlayer.class);
+        kryo.register(VexelListDto.class);
     }
 
     public static class Entity implements Serializable {
@@ -293,5 +298,32 @@ public class KryoConfig {
 
     public static class StartNewCycle implements Serializable {
 
+    }
+
+    public static class CompanyData extends Entity implements Serializable {
+
+        public CompanyData(int amount, String name) {
+            super(amount, name);
+        }
+
+        public CompanyData() {
+        }
+    }
+
+    public static class RequestCompanyDataListDto implements Serializable {
+
+    }
+
+    public static class CompanyDataListDto implements Serializable {
+        public List<CompanyData> companyDataList;
+    }
+
+    public static class AddPlayer implements Serializable {
+        public Identifier identifier;
+        public CompanyData company;
+    }
+
+    public static class VexelListDto implements Serializable {
+        public List<Integer> vexelIdList;
     }
 }

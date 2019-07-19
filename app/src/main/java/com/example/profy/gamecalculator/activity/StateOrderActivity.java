@@ -61,6 +61,17 @@ public class StateOrderActivity extends BaseActivity {
         receiver.addHandler(NetworkService.STATE_ORDERS_ACTION, Obj -> {
             orderListAdapter.setData(((KryoConfig.StateOrderListDto) Obj).stateOrderList);
         });
+
+        receiver.addHandler(NetworkService.VEXEL_LIST_ACTION, Obj -> {
+            StringBuilder stringBuilder = new StringBuilder();
+            List<Integer> vexels = ((KryoConfig.VexelListDto) Obj).vexelIdList;
+            for (Integer vexelId : vexels) {
+                stringBuilder
+                        .append(vexelId)
+                        .append("\n");
+            }
+            showInformationDialog("ID Векселей", stringBuilder.toString());
+        });
     }
 
     @Override
@@ -83,7 +94,7 @@ public class StateOrderActivity extends BaseActivity {
     }
 
     private void sendData(KryoConfig.Identifier identifier, int orderId) {
-        Log.d( "State order", "Sending data...");
+        Log.d("State order", "Sending data...");
         KryoConfig.ResolveStateOrder stateOrder = new KryoConfig.ResolveStateOrder();
         stateOrder.id = identifier;
         stateOrder.orderId = orderId;

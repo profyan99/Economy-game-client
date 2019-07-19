@@ -2,6 +2,7 @@ package com.example.profy.gamecalculator.activity.transfer;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -55,6 +56,11 @@ public abstract class SimpleTransferActivity<T extends KryoConfig.Entity> extend
     protected abstract void retrieveEntities();
 
     protected abstract void sendData();
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return false;
+    }
 
     @Override
     protected int getLayoutResourceId() {

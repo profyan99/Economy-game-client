@@ -77,6 +77,11 @@
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.RegisterActivity">
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

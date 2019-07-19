@@ -74,6 +74,8 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         filter.addAction(NetworkService.DISCONNECT_ACTION);
         filter.addAction(NetworkService.CONNECT_ACTION);
         filter.addAction(NetworkService.STATE_ORDERS_ACTION);
+        filter.addAction(NetworkService.COMPANY_DATA_ACTION);
+        filter.addAction(NetworkService.VEXEL_LIST_ACTION);
         registerReceiver(receiver, filter);
 
         toolbar = findViewById(R.id.toolbar);
@@ -245,6 +247,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

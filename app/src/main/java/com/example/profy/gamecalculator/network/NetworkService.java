@@ -30,6 +30,8 @@ public class NetworkService extends Service {
     public static final String DISCONNECT_ACTION = "com.example.profy.gamecalculator.network.disconnect";
     public static final String CONNECT_ACTION = "com.example.profy.gamecalculator.network.connect";
     public static final String STATE_ORDERS_ACTION = "com.example.profy.gamecalculator.network.state_orders";
+    public static final String COMPANY_DATA_ACTION = "com.example.profy.gamecalculator.network.company_data";
+    public static final String VEXEL_LIST_ACTION = "com.example.profy.gamecalculator.network.vexel_list";
     public static final String RETRIEVE_DATA = "data";
 
     private final NetworkBinder networkBinder = new NetworkBinder();
@@ -96,6 +98,14 @@ public class NetworkService extends Service {
                     sendBroadcast(intent);
                 } else if (object instanceof KryoConfig.StateOrderListDto) {
                     Intent intent = new Intent(STATE_ORDERS_ACTION);
+                    intent.putExtra(RETRIEVE_DATA, (Serializable) object);
+                    sendBroadcast(intent);
+                } else if (object instanceof KryoConfig.CompanyDataListDto) {
+                    Intent intent = new Intent(COMPANY_DATA_ACTION);
+                    intent.putExtra(RETRIEVE_DATA, (Serializable) object);
+                    sendBroadcast(intent);
+                } else if (object instanceof KryoConfig.VexelListDto) {
+                    Intent intent = new Intent(VEXEL_LIST_ACTION);
                     intent.putExtra(RETRIEVE_DATA, (Serializable) object);
                     sendBroadcast(intent);
                 } else {
