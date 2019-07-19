@@ -41,23 +41,6 @@ public class StateOrderActivity extends BaseActivity {
             resolveTransaction(((KryoConfig.StateOrderDto) orderListAdapter.getItem(position)).id);
         });
 
-        /*List<KryoConfig.StateOrderDto> orderDtos = new ArrayList<>();
-        orderDtos.add(new KryoConfig.StateOrderDto(1, 1000, new KryoConfig.ProductData(100, "Steal"), true));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderDtos.add(new KryoConfig.StateOrderDto(2, 727, new KryoConfig.ProductData(123, "Wood"), false));
-        orderListAdapter.setData(orderDtos);*/
-
         receiver.addHandler(NetworkService.STATE_ORDERS_ACTION, Obj -> {
             orderListAdapter.setData(((KryoConfig.StateOrderListDto) Obj).stateOrderList);
         });

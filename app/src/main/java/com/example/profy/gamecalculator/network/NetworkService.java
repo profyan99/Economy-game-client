@@ -177,7 +177,6 @@ public class NetworkService extends Service {
                     } catch (InterruptedException ignored) {
 
                     }
-                    //cancel(false);
                 }
             }
             return null;

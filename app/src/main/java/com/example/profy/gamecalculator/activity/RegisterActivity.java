@@ -1,6 +1,7 @@
 package com.example.profy.gamecalculator.activity;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -14,8 +15,9 @@ public class RegisterActivity extends SimpleTransactionActivity<KryoConfig.Compa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((TextView) findViewById(R.id.resourceTypeText)).setText("ID карты:");
-        ((TextView) findViewById(R.id.textView6)).setText("Компания:");
+        ((TextView) findViewById(R.id.resourceTypeText)).setText("Компания");
+        ((TextView) findViewById(R.id.textView6)).setText("ID карты:");
+        ((TextView) findViewById(R.id.resourceText)).setVisibility(View.INVISIBLE);
         ((TextView) findViewById(R.id.resourceTitleText)).setText("Регистратура");
         ((Button) findViewById(R.id.resourceButton)).setText("Применить");
 

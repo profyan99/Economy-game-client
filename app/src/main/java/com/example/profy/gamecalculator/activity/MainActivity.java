@@ -52,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         startActivity(new Intent(this, RegisterActivity.class));
     }
 
+    public void setAdminActivity(View view) {
+        startActivity(new Intent(this, AdminActivity.class));
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
