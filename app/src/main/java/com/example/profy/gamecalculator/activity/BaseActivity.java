@@ -36,9 +36,7 @@ import com.example.profy.gamecalculator.util.NfcManager;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public abstract class BaseActivity extends AppCompatActivity implements Serializable {
 
@@ -52,6 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     private boolean mBound;
     protected NetworkBroadcastReceiver receiver;
     protected Toolbar toolbar;
+    protected boolean isNfcSupports = false;
 
     @Override
     protected void onStart() {
@@ -88,30 +87,32 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
         //NFC
         adapter = NfcAdapter.getDefaultAdapter(this);
 
-        if (adapter == null) {
+        isNfcSupports = adapter != null;
+        if (!isNfcSupports) {
             Toast.makeText(this, "NFC не поддерживается", Toast.LENGTH_LONG).show();
+        } else {
+            if (!adapter.isEnabled()) {
+                Toast.makeText(this, "Включите функцию NFC, прежде чем использовать",
+                        Toast.LENGTH_LONG).show();
+            }
+
+            mPendingIntent = PendingIntent.getActivity(
+                    this,
+                    0,
+                    new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
+                    0
+            );
+            IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
+            try {
+                ndef.addDataType("*/*");
+            } catch (IntentFilter.MalformedMimeTypeException e) {
+                Log.e("ERROR", "Intent filter error");
+                throw new RuntimeException("fail", e);
+            }
+            mFilters = new IntentFilter[]{ndef};
+            mTechLists = new String[][]{new String[]{MifareClassic.class.getName()}};
         }
 
-        if (!adapter.isEnabled()) {
-            Toast.makeText(this, "Включите функцию NFC, прежде чем использовать",
-                    Toast.LENGTH_LONG).show();
-        }
-
-        mPendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                0
-        );
-        IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
-        try {
-            ndef.addDataType("*/*");
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            Log.e("ERROR", "Intent filter error");
-            throw new RuntimeException("fail", e);
-        }
-        mFilters = new IntentFilter[]{ndef};
-        mTechLists = new String[][]{new String[]{MifareClassic.class.getName()}};
 
         receiver.addHandler(NetworkService.TRANSACTION_STATUS_ACTION, obj -> {
             transactionStatus((KryoConfig.TransactionStatus) obj);
@@ -184,7 +185,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Serializ
     }
 
     void resolveIntent(Intent intent) {
-        if (Objects.equals(intent.getAction(), NfcAdapter.ACTION_TECH_DISCOVERED)) {
+        if (Objects.equals(intent.getAction(), NfcAdapter.ACTION_TECH_DISCOVERED) && isNfcSupports) {
             try {
                 String cardId = NfcManager.getNfcCardData(intent);
                 Log.i("", "Card id: " + cardId);
